@@ -1,0 +1,70 @@
+<header class="fixed top-0 left-0 right-0 z-50 bg-transparent transition-all duration-300" id="main-header">
+  <nav class="container mx-auto px-6 py-4 flex items-center justify-between">
+    <!-- Logo -->
+    <a href="{{ '/' | relative_url }}" class="flex items-center" aria-label="GridStab home">
+      <div class="text-2xl font-bold text-white">
+        <span class="text-gridstab-orange">Grid</span>Stab
+      </div>
+    </a>
+
+    <!-- Desktop Navigation -->
+    <div class="hidden md:flex items-center space-x-8">
+      {% for item in site.data.navigation %}
+        {% if item.external %}
+          <a href="{{ item.url }}"
+             target="_blank"
+             rel="noopener noreferrer"
+             class="text-white hover:text-gridstab-orange transition-colors flex items-center">
+            {{ item.title }}
+            <i data-lucide="external-link" class="w-4 h-4 ml-1"></i>
+          </a>
+        {% else %}
+          <a href="{{ item.url | relative_url }}"
+             class="text-white hover:text-gridstab-orange transition-colors">
+            {{ item.title }}
+          </a>
+        {% endif %}
+      {% endfor %}
+
+      <!-- Contact CTA -->
+      <a href="#contact"
+         class="inline-flex items-center px-6 py-2 bg-gridstab-orange text-white rounded-lg hover:bg-opacity-90 transition-all font-semibold">
+        Contact
+      </a>
+    </div>
+
+    <!-- Mobile Menu Toggle -->
+    <button id="mobile-menu-toggle"
+            class="md:hidden text-white"
+            aria-label="Toggle menu">
+      <i data-lucide="menu" class="w-6 h-6"></i>
+    </button>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-200 shadow-lg">
+    <div class="container mx-auto px-6 py-4 flex flex-col space-y-4">
+      {% for item in site.data.navigation %}
+        {% if item.external %}
+          <a href="{{ item.url }}"
+             target="_blank"
+             rel="noopener noreferrer"
+             class="text-gridstab-dark hover:text-gridstab-orange transition-colors flex items-center">
+            {{ item.title }}
+            <i data-lucide="external-link" class="w-4 h-4 ml-1"></i>
+          </a>
+        {% else %}
+          <a href="{{ item.url | relative_url }}"
+             class="text-gridstab-dark hover:text-gridstab-orange transition-colors">
+            {{ item.title }}
+          </a>
+        {% endif %}
+      {% endfor %}
+
+      <a href="#contact"
+         class="inline-flex items-center justify-center px-6 py-2 bg-gridstab-orange text-white rounded-lg hover:bg-opacity-90 transition-all font-semibold">
+        Contact
+      </a>
+    </div>
+  </div>
+</header>

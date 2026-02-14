@@ -1,0 +1,63 @@
+<section id="services" class="py-20 bg-gray-50">
+  <div class="container mx-auto px-6">
+    <!-- Section Header -->
+    <div class="text-center mb-16">
+      <h2 class="text-4xl md:text-5xl font-bold text-gridstab-dark mb-4">
+        How Can I Help?
+      </h2>
+      <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+        Expert consulting services for the energy transition
+      </p>
+    </div>
+
+    <!-- Services Grid -->
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+      {% for service in site.data.services %}
+        <div class="service-card bg-white rounded-lg shadow-md hover:shadow-2xl transition-all duration-300 border-t-4 border-gridstab-orange group">
+          <div class="p-8">
+            <!-- Icon -->
+            <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-gridstab-orange group-hover:text-white transition-all">
+              <i data-lucide="{{ service.icon }}" class="w-8 h-8"></i>
+            </div>
+
+            <!-- Title -->
+            <h3 class="text-2xl font-semibold text-gridstab-dark mb-4 text-center">
+              {{ service.title }}
+            </h3>
+
+            <!-- Description -->
+            <p class="text-gray-700 leading-relaxed mb-4">
+              {{ service.description }}
+            </p>
+
+            <!-- Why It Matters -->
+            <div class="mt-6 pt-6 border-t border-gray-200">
+              <p class="text-sm font-semibold text-gridstab-orange mb-2">Why it matters:</p>
+              <p class="text-gray-600 leading-relaxed text-sm italic">
+                {{ service.why_matters }}
+              </p>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <!-- CTA Section -->
+    <div class="text-center mt-16">
+      <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+        <a href="#contact"
+           class="inline-flex items-center px-8 py-4 bg-gridstab-orange text-white rounded-lg hover:bg-opacity-90 transition-all font-semibold text-lg shadow-lg hover:shadow-xl">
+          Get in Touch
+          <i data-lucide="mail" class="w-5 h-5 ml-2"></i>
+        </a>
+        <a href="{{ site.substack_url }}"
+           target="_blank"
+           rel="noopener noreferrer"
+           class="inline-flex items-center px-8 py-4 border-2 border-gridstab-orange text-gridstab-orange rounded-lg hover:bg-gridstab-orange hover:text-white transition-all font-semibold text-lg">
+          Read My Insights
+          <i data-lucide="external-link" class="w-5 h-5 ml-2"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

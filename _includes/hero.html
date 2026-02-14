@@ -1,0 +1,44 @@
+<section class="relative min-h-screen flex items-center justify-center">
+  <!-- Background Image -->
+  <div class="absolute inset-0 bg-cover bg-center"
+       style="background-image: url('{{ '/assets/images/europenight.jpg' | relative_url }}');">
+  </div>
+
+  <!-- Gradient Overlay -->
+  <div class="absolute inset-0 bg-gradient-to-br from-gray-900/80 to-gridstab-orange/50"></div>
+
+  <!-- Content -->
+  <div class="relative z-10 max-w-5xl mx-auto px-6 text-center text-white">
+    <h1 class="font-bold text-4xl md:text-5xl lg:text-7xl mb-6 leading-tight animate-fade-in">
+      Demystifying Grid Stability and Power-Electronic Systems
+    </h1>
+
+    <p class="text-lg md:text-xl lg:text-2xl mb-8 font-light opacity-90 leading-relaxed max-w-3xl mx-auto">
+      Making complex power systems topics accessible and engaging for engineers, investors, policy makers, and energy enthusiasts
+    </p>
+
+    <!-- CTAs -->
+    <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mt-12">
+      <a href="#services"
+         class="inline-flex items-center px-8 py-4 bg-gridstab-orange text-white rounded-lg hover:bg-opacity-90 transition-all font-semibold text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+        Explore Services
+        <i data-lucide="arrow-down" class="w-5 h-5 ml-2"></i>
+      </a>
+
+      <a href="{{ site.substack_url }}"
+         target="_blank"
+         rel="noopener noreferrer"
+         class="inline-flex items-center px-8 py-4 bg-white text-gridstab-dark rounded-lg hover:bg-gray-100 transition-all font-semibold text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+        Subscribe to GridStab News
+        <i data-lucide="external-link" class="w-5 h-5 ml-2"></i>
+      </a>
+    </div>
+  </div>
+
+  <!-- Scroll Indicator -->
+  <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+    <div class="w-6 h-10 border-2 border-white/50 rounded-full flex justify-center">
+      <div class="w-1 h-3 bg-white/50 rounded-full mt-2 animate-pulse"></div>
+    </div>
+  </div>
+</section>

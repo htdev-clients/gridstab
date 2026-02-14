@@ -1,0 +1,34 @@
+# Site Settings
+title: GridStab
+description: Demystify grid stability and power-electronic systems
+author: Gilles Chaspierre
+email: contact@gridstab.com
+
+# Build settings
+# CRITICAL: baseurl must match repository name for GitHub Pages project site mode
+baseurl: "/gridstab"
+url: "https://htdev-clients.github.io"
+permalink: pretty
+
+# Plugins (GitHub Pages compatible)
+plugins:
+  - jekyll-seo-tag
+  - jekyll-sitemap
+
+# Exclude from processing
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor
+  - README.md
+  - .gitignore
+  - description.md
+
+# External links
+substack_url: https://gilleschaspiere.substack.com/
+
+# Brand colors
+brand_primary: "#FF6719"
+brand_secondary: "#1a1a1a"
+brand_accent: "#2563eb"
