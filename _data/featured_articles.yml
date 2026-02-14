@@ -1,27 +1,38 @@
 # Featured Substack Articles
-# Update this file with your latest articles - add/remove as needed
+# These are REAL articles from https://gilleschaspiere.substack.com/
+# Update this file as you publish new articles
 
-- title: "Understanding Grid-Forming Inverters"
-  excerpt: "A no-equations guide to how grid-forming inverters are revolutionizing renewable energy integration and solving stability challenges in modern power systems."
-  url: "https://gilleschaspiere.substack.com/p/grid-forming-inverters"
-  date: "2024-01-15"
+- title: "Why Inverter Fault Currents Are Rewriting the Rules of Grid Protection"
+  excerpt: "For decades, the Short-Circuit Ratio (SCR) was the trusted indicator for assessing grid strength. But as renewable energy sources and inverter-based resources dominate modern power systems, SCR is losing its relevance."
+  url: "https://gilleschaspiere.substack.com/p/why-inverter-fault-currents-are-rewriting"
+  date: "2024-12-30"
   image: "/assets/images/windturbines.jpg"
+  # Cover image URL: (none on Substack - using local placeholder)
 
-- title: "The Short-Circuit Ratio Challenge"
-  excerpt: "Why traditional grid strength metrics are failing us in the renewable energy transition, and what we can do about it."
-  url: "https://gilleschaspiere.substack.com/p/short-circuit-ratio"
-  date: "2024-01-08"
+- title: "Why Short-Circuit Ratio is Losing Its Grip in Modern Power Systems"
+  excerpt: "For decades, the Short-Circuit Ratio (SCR) was the trusted indicator for assessing grid strength. But as renewable energy sources and inverter-based resources dominate modern power systems, SCR is losing its relevance."
+  url: "https://gilleschaspiere.substack.com/p/why-short-circuit-ratio-is-losing"
+  date: "2024-11-20"
   image: "/assets/images/europenight.jpg"
+  # Cover image URL: https://substackcdn.com/image/fetch/.../7220d634-7a67-4bac-96ad-e183ab919677_578x424.png
 
-- title: "MTDC Grids: The Future of Transmission"
-  excerpt: "Exploring Multi-Terminal DC grids and their role in connecting offshore wind farms and enabling long-distance power transmission."
-  url: "https://gilleschaspiere.substack.com/p/mtdc-grids-future"
-  date: "2023-12-20"
+- title: "Over-Voltages in Transmission Systems: Causes, Risks, and Mitigation Strategies"
+  excerpt: "Understanding the causes, risks, and mitigation strategies for over-voltages in high-voltage transmission systems as renewable energy integration increases."
+  url: "https://gilleschaspiere.substack.com/p/over-voltages-in-transmission-systems"
+  date: "2024-10-30"
   image: "/assets/images/solarpanels.jpg"
+  # Cover image URL: https://substackcdn.com/image/fetch/.../2a283f40-fe95-4ac8-8a08-69786ee1df63_1413x653.png
 
-# To add more articles, copy this template:
+# HOW TO ADD REAL SUBSTACK COVER IMAGES:
+# 1. Visit your Substack article
+# 2. Right-click on the cover image → "Save Image As"
+# 3. Save to assets/images/ folder (e.g., "scr-article.jpg")
+# 4. Update the image field: image: "/assets/images/scr-article.jpg"
+# 5. Commit and push to deploy
+
+# To add more articles:
 # - title: "Article Title"
-#   excerpt: "Brief description (1-2 sentences)"
+#   excerpt: "Brief description from article subtitle"
 #   url: "https://gilleschaspiere.substack.com/p/article-slug"
 #   date: "YYYY-MM-DD"
-#   image: "/assets/images/your-image.jpg"  # Optional: leave blank for placeholder
+#   image: "/assets/images/your-image.jpg"
