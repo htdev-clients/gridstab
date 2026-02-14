@@ -1,0 +1,71 @@
+<section id="subscription" class="py-20 bg-white">
+  <div class="container mx-auto px-6">
+    <!-- Section Header -->
+    <div class="text-center mb-16">
+      <h2 class="text-4xl md:text-5xl font-bold text-gridstab-dark mb-4">
+        Subscribe to GridStab News
+      </h2>
+      <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+        Join over 1,000 subscribers who get weekly insights on power system dynamics and stability—no equations required
+      </p>
+    </div>
+
+    <!-- Pricing Grid -->
+    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
+      {% for tier in site.data.subscriptions %}
+        <div class="relative bg-white rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 border {% if tier.recommended %}border-gridstab-orange border-2 scale-105{% else %}border-gray-200{% endif %}">
+          <!-- Recommended Badge -->
+          {% if tier.recommended %}
+            <div class="absolute -top-4 left-1/2 transform -translate-x-1/2">
+              <span class="bg-gridstab-orange text-white px-4 py-1 rounded-full text-sm font-semibold flex items-center">
+                <i data-lucide="star" class="w-4 h-4 mr-1"></i>
+                Recommended
+              </span>
+            </div>
+          {% endif %}
+
+          <div class="p-8">
+            <!-- Tier Name -->
+            <h3 class="text-2xl font-bold text-gridstab-dark mb-2 text-center">
+              {{ tier.name }}
+            </h3>
+
+            <!-- Price -->
+            <div class="text-center mb-6">
+              <span class="text-5xl font-bold text-gridstab-dark">{{ tier.price }}</span>
+              <span class="text-gray-600">{{ tier.period }}</span>
+              {% if tier.savings %}
+                <div class="text-sm text-green-600 font-semibold mt-1">{{ tier.savings }}</div>
+              {% endif %}
+            </div>
+
+            <!-- Features -->
+            <ul class="space-y-3 mb-8">
+              {% for feature in tier.features %}
+                <li class="flex items-start">
+                  <i data-lucide="check" class="w-5 h-5 text-gridstab-orange mr-2 flex-shrink-0 mt-0.5"></i>
+                  <span class="text-gray-700">{{ feature }}</span>
+                </li>
+              {% endfor %}
+            </ul>
+
+            <!-- CTA Button -->
+            <a href="{{ tier.cta_url }}"
+               target="_blank"
+               rel="noopener noreferrer"
+               class="block text-center px-6 py-3 {% if tier.recommended %}bg-gridstab-orange text-white{% else %}border-2 border-gridstab-orange text-gridstab-orange hover:bg-gridstab-orange hover:text-white{% endif %} rounded-lg font-semibold transition-all">
+              {{ tier.cta_text }}
+            </a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <!-- Additional Info -->
+    <div class="mt-12 text-center">
+      <p class="text-gray-600 max-w-2xl mx-auto">
+        All subscriptions are processed securely through Substack. You can cancel anytime. Questions? <a href="#contact" class="text-gridstab-orange hover:underline">Get in touch</a>.
+      </p>
+    </div>
+  </div>
+</section>

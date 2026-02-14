@@ -1,0 +1,74 @@
+<footer class="bg-gridstab-dark text-white py-16" id="contact">
+  <div class="container mx-auto px-6">
+    <div class="grid md:grid-cols-3 gap-12 mb-12">
+      <!-- Column 1: Branding -->
+      <div>
+        <div class="text-3xl font-bold mb-4">
+          <span class="text-gridstab-orange">Grid</span>Stab
+        </div>
+        <p class="text-gray-300 leading-relaxed">
+          Demystifying grid stability and power-electronic systems for engineers, investors, policy makers, and energy enthusiasts.
+        </p>
+      </div>
+
+      <!-- Column 2: Quick Links -->
+      <div>
+        <h3 class="text-xl font-semibold mb-4">Quick Links</h3>
+        <ul class="space-y-2">
+          <li>
+            <a href="#about" class="text-gray-300 hover:text-gridstab-orange transition-colors">
+              About
+            </a>
+          </li>
+          <li>
+            <a href="#services" class="text-gray-300 hover:text-gridstab-orange transition-colors">
+              Services
+            </a>
+          </li>
+          <li>
+            <a href="{{ '/cv.html' | relative_url }}" class="text-gray-300 hover:text-gridstab-orange transition-colors">
+              CV
+            </a>
+          </li>
+          <li>
+            <a href="{{ site.substack_url }}"
+               target="_blank"
+               rel="noopener noreferrer"
+               class="text-gray-300 hover:text-gridstab-orange transition-colors flex items-center">
+              GridStab News (Substack)
+              <i data-lucide="external-link" class="w-4 h-4 ml-1"></i>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Column 3: Contact & Social -->
+      <div>
+        <h3 class="text-xl font-semibold mb-4">Connect</h3>
+        <div class="space-y-3">
+          <a href="mailto:{{ site.email }}"
+             class="flex items-center text-gray-300 hover:text-gridstab-orange transition-colors">
+            <i data-lucide="mail" class="w-5 h-5 mr-2"></i>
+            {{ site.email }}
+          </a>
+          <div class="flex space-x-4 mt-4">
+            <!-- Add social links when available -->
+            <!-- <a href="#" class="text-gray-300 hover:text-gridstab-orange transition-colors">
+              <i data-lucide="linkedin" class="w-6 h-6"></i>
+            </a>
+            <a href="#" class="text-gray-300 hover:text-gridstab-orange transition-colors">
+              <i data-lucide="twitter" class="w-6 h-6"></i>
+            </a> -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Copyright -->
+    <div class="border-t border-gray-700 pt-8">
+      <p class="text-gray-400 text-sm leading-relaxed">
+        Copyright © 2026 by Gilles Chaspierre. All rights reserved. No part of these publications may be reproduced, distributed, or transmitted in any form or by any means, including photocopying, recording, or other electronic or mechanical methods, without the prior written permission of the publisher, except in the case of brief quotations embodied in critical reviews and certain other non-commercial uses permitted by copyright law.
+      </p>
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,20 @@
+- title: Dynamic Stability Studies & Grid Modelling
+  icon: zap
+  description: |
+    I provide advanced simulations and analysis of power system dynamics, including transient stability, small-signal stability, and frequency response. I help identify vulnerabilities and optimize system performance under normal and contingency conditions.
+  why_matters: |
+    As grids integrate more renewables and power-electronic assets, dynamic stability becomes critical to avoid blackouts and ensure reliable operation. TSOs, investors, and policymakers need accurate insights to make informed decisions on infrastructure and compliance.
+
+- title: Grid Integration of Renewable & Power-Electronic Assets
+  icon: wind
+  description: |
+    Expert assessment and design of grid connection strategies for wind, solar, and HVDC systems. I support compliance with grid codes, develop control strategies, and evaluate the impact of inverter-based resources on system stability.
+  why_matters: |
+    The energy transition hinges on seamless integration of renewables. Poorly managed connections can lead to instability and costly curtailments. My expertise ensures projects meet technical requirements and deliver maximum value.
+
+- title: Advisory on Stability Compliance & Investment Risk
+  icon: shield-check
+  description: |
+    Strategic consulting for investors and policymakers on stability-related risks in energy projects. I provide due diligence, regulatory compliance guidance, and risk mitigation strategies for large-scale renewable and transmission investments.
+  why_matters: |
+    Grid stability is not just a technical issue—it's a financial and regulatory one. Understanding stability risks early prevents costly delays and ensures projects align with evolving grid codes and market expectations.
