@@ -1,0 +1,27 @@
+# Featured Substack Articles
+# Update this file with your latest articles - add/remove as needed
+
+- title: "Understanding Grid-Forming Inverters"
+  excerpt: "A no-equations guide to how grid-forming inverters are revolutionizing renewable energy integration and solving stability challenges in modern power systems."
+  url: "https://gilleschaspiere.substack.com/p/grid-forming-inverters"
+  date: "2024-01-15"
+  category: "Technical Deep-Dive"
+
+- title: "The Short-Circuit Ratio Challenge"
+  excerpt: "Why traditional grid strength metrics are failing us in the renewable energy transition, and what we can do about it."
+  url: "https://gilleschaspiere.substack.com/p/short-circuit-ratio"
+  date: "2024-01-08"
+  category: "Grid Stability"
+
+- title: "MTDC Grids: The Future of Transmission"
+  excerpt: "Exploring Multi-Terminal DC grids and their role in connecting offshore wind farms and enabling long-distance power transmission."
+  url: "https://gilleschaspiere.substack.com/p/mtdc-grids-future"
+  date: "2023-12-20"
+  category: "Transmission"
+
+# To add more articles, copy this template:
+# - title: "Article Title"
+#   excerpt: "Brief description (1-2 sentences)"
+#   url: "https://gilleschaspiere.substack.com/p/article-slug"
+#   date: "YYYY-MM-DD"
+#   category: "Category Name"
