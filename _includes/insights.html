@@ -1,50 +1,69 @@
-<section id="insights" class="py-20 bg-gray-50">
+<section id="insights" class="py-20 bg-white">
   <div class="container mx-auto px-6">
     <!-- Section Header -->
     <div class="text-center mb-16">
       <h2 class="text-4xl md:text-5xl font-bold text-gridstab-dark mb-4">
-        Latest Insights
+        Latest from GridStab News
       </h2>
       <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-        Recent articles from GridStab News exploring power system dynamics, stability challenges, and the energy transition
+        Demystifying power system dynamics and stability for engineers, investors, policy makers, and energy enthusiasts
       </p>
     </div>
 
-    <!-- Articles Grid -->
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto mb-12">
+    <!-- Articles List (Stacked) -->
+    <div class="max-w-4xl mx-auto space-y-12 mb-16">
       {% for article in site.data.featured_articles limit:3 %}
-        <article class="bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group">
-          <!-- Category Badge -->
-          <div class="bg-gridstab-orange text-white px-4 py-2 text-sm font-semibold">
-            {{ article.category }}
-          </div>
+        <article class="group">
+          <a href="{{ article.url }}"
+             target="_blank"
+             rel="noopener noreferrer"
+             class="flex flex-col md:flex-row gap-6 hover:opacity-90 transition-opacity">
 
-          <!-- Content -->
-          <div class="p-6">
-            <!-- Date -->
-            <time class="text-sm text-gray-500 mb-2 block">
-              {{ article.date | date: "%B %d, %Y" }}
-            </time>
+            <!-- Article Image -->
+            <div class="md:w-1/3 flex-shrink-0">
+              <div class="aspect-video md:aspect-square overflow-hidden rounded-lg bg-gray-100">
+                {% if article.image %}
+                  <img src="{{ article.image | relative_url }}"
+                       alt="{{ article.title }}"
+                       class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                {% else %}
+                  <!-- Placeholder if no image -->
+                  <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-gridstab-orange/20 to-gridstab-blue/20">
+                    <i data-lucide="newspaper" class="w-16 h-16 text-gridstab-orange opacity-50"></i>
+                  </div>
+                {% endif %}
+              </div>
+            </div>
 
-            <!-- Title -->
-            <h3 class="text-xl font-bold text-gridstab-dark mb-3 group-hover:text-gridstab-orange transition-colors">
-              {{ article.title }}
-            </h3>
+            <!-- Article Content -->
+            <div class="md:w-2/3 flex flex-col justify-center">
+              <!-- Date -->
+              <time class="text-sm text-gray-500 mb-2 block">
+                {{ article.date | date: "%B %d, %Y" }}
+              </time>
 
-            <!-- Excerpt -->
-            <p class="text-gray-700 leading-relaxed mb-4">
-              {{ article.excerpt }}
-            </p>
+              <!-- Title -->
+              <h3 class="text-2xl md:text-3xl font-bold text-gridstab-dark mb-3 group-hover:text-gridstab-orange transition-colors font-serif">
+                {{ article.title }}
+              </h3>
 
-            <!-- Read More Link -->
-            <a href="{{ article.url }}"
-               target="_blank"
-               rel="noopener noreferrer"
-               class="inline-flex items-center text-gridstab-orange hover:text-gridstab-dark transition-colors font-semibold">
-              Read on Substack
-              <i data-lucide="external-link" class="w-4 h-4 ml-2"></i>
-            </a>
-          </div>
+              <!-- Subtitle/Excerpt -->
+              <p class="text-gray-700 leading-relaxed mb-4 text-lg">
+                {{ article.excerpt }}
+              </p>
+
+              <!-- Read More -->
+              <div class="inline-flex items-center text-gridstab-orange font-semibold">
+                Read full article
+                <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
+              </div>
+            </div>
+          </a>
+
+          <!-- Divider between articles (except last one) -->
+          {% unless forloop.last %}
+            <hr class="mt-12 border-gray-200">
+          {% endunless %}
         </article>
       {% endfor %}
     </div>
@@ -54,9 +73,9 @@
       <a href="{{ site.substack_url }}"
          target="_blank"
          rel="noopener noreferrer"
-         class="inline-flex items-center px-8 py-4 border-2 border-gridstab-orange text-gridstab-orange rounded-lg hover:bg-gridstab-orange hover:text-white transition-all font-semibold text-lg">
+         class="inline-flex items-center px-8 py-4 bg-gridstab-orange text-white rounded-lg hover:bg-opacity-90 transition-all font-semibold text-lg shadow-lg hover:shadow-xl">
         View All Articles on Substack
-        <i data-lucide="arrow-right" class="w-5 h-5 ml-2"></i>
+        <i data-lucide="external-link" class="w-5 h-5 ml-2"></i>
       </a>
     </div>
   </div>
