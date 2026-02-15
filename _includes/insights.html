@@ -1,36 +1,34 @@
-<section id="insights" class="py-20 bg-white">
-  <div class="container mx-auto px-6">
-    <!-- Section Header -->
-    <div class="text-center mb-16">
-      <h2 class="text-4xl md:text-5xl font-bold text-gridstab-dark mb-4">
-        Latest from GridStab News
-      </h2>
-      <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-        Demystifying power system dynamics and stability for engineers, investors, policy makers, and energy enthusiasts
-      </p>
+<section id="insights" class="insights-section py-20 bg-gray-50">
+  <div class="container mx-auto px-4">
+    <h2 class="insights-heading text-4xl font-bold text-center mb-4 text-gray-900">
+      Latest Insights
+    </h2>
+    <p class="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
+      Regular posts to demystify power system dynamics and stability
+    </p>
+
+    <!-- Loading Placeholder -->
+    <div id="loading-placeholder" class="text-center py-8">
+      <p class="text-gray-600 animate-pulse">Loading latest articles...</p>
     </div>
 
-    <!-- Substack Embed Widget (Auto-updates with new posts) -->
-    <div class="max-w-4xl mx-auto mb-16">
-      <iframe
-        src="https://gilleschaspiere.substack.com/embed"
-        width="100%"
-        height="600"
-        style="border:1px solid #EEE; background:white; border-radius: 8px;"
-        frameborder="0"
-        scrolling="yes"
-        loading="lazy">
-      </iframe>
+    <!-- Feed Container (populated by JavaScript) -->
+    <div id="substack-feed" class="max-w-4xl mx-auto space-y-12">
+      <!-- Posts will be inserted here by JavaScript -->
     </div>
 
-    <!-- View All Articles CTA -->
-    <div class="text-center">
+    <!-- Error Message (hidden by default) -->
+    <div id="error-message" class="hidden text-center py-8">
+      <p class="text-gray-600">Unable to load articles. <a href="{{ site.substack_url }}" class="text-primary hover:underline">Visit our Substack</a></p>
+    </div>
+
+    <!-- CTA Button -->
+    <div class="text-center mt-16">
       <a href="{{ site.substack_url }}"
          target="_blank"
          rel="noopener noreferrer"
-         class="inline-flex items-center px-8 py-4 bg-gridstab-orange text-white rounded-lg hover:bg-opacity-90 transition-all font-semibold text-lg shadow-lg hover:shadow-xl">
+         class="inline-block bg-primary text-white px-8 py-3 rounded-lg hover:bg-opacity-90 transition-all font-semibold">
         View All Articles on Substack
-        <i data-lucide="external-link" class="w-5 h-5 ml-2"></i>
       </a>
     </div>
   </div>

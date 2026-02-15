@@ -170,3 +170,76 @@ a {
     line-height: 1.5;
   }
 }
+
+/* Insights Section - Substack Feed */
+.insights-section {
+  background-color: #f9fafb;
+}
+
+/* Substack-style post cards */
+.substack-post {
+  transition: all 0.3s ease;
+  border: 1px solid #e5e7eb;
+}
+
+.substack-post:hover {
+  transform: translateY(-4px);
+  border-color: #d1d5db;
+}
+
+.substack-post a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Post image container */
+.post-image-container {
+  overflow: hidden;
+  background-color: #ffffff;
+}
+
+.post-image-container img {
+  transition: transform 0.3s ease;
+}
+
+.substack-post:hover .post-image-container img {
+  transform: scale(1.05);
+}
+
+/* Primary brand color for links and buttons */
+.text-primary {
+  color: #FF6719;
+}
+
+.bg-primary {
+  background-color: #FF6719;
+}
+
+.hover\:text-primary:hover {
+  color: #FF6719;
+}
+
+/* Hidden utility (for error message) */
+.hidden {
+  display: none;
+}
+
+/* Spacing utilities */
+.space-y-12 > * + * {
+  margin-top: 3rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .insights-heading {
+    font-size: 2rem !important;
+  }
+
+  .substack-post .p-8 {
+    padding: 1.5rem;
+  }
+
+  .post-image-container img {
+    height: 200px;
+  }
+}
