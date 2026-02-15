@@ -24,9 +24,15 @@ exclude:
   - README.md
   - .gitignore
   - description.md
+  - package.json
+  - package-lock.json
+  - tailwind.config.js
 
 # External links
 substack_url: https://gilleschaspiere.substack.com/
+
+# Substack stats (update manually when milestones are reached)
+subscriber_count: "1,000"
 
 # Brand colors
 brand_primary: "#FF6719"

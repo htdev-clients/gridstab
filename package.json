@@ -1,0 +1,25 @@
+{
+  "name": "website",
+  "version": "1.0.0",
+  "description": "Professional website for Gilles Chaspierre - Expert in power systems dynamics, stability, and control.",
+  "main": "index.js",
+  "scripts": {
+    "build:css": "npx tailwindcss -i ./assets/css/main.css -o ./assets/css/style.css --minify",
+    "watch:css": "npx tailwindcss -i ./assets/css/main.css -o ./assets/css/style.css --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/htdev-clients/gridstab.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/htdev-clients/gridstab/issues"
+  },
+  "homepage": "https://github.com/htdev-clients/gridstab#readme",
+  "devDependencies": {
+    "tailwindcss": "^3.4.19"
+  }
+}
