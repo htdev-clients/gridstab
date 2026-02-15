@@ -5,8 +5,7 @@
   url: "#services"
 
 - title: Insights
-  url: "https://gilleschaspiere.substack.com/"
-  external: true
+  url: "#insights"
 
 - title: CV
-  url: "/cv.html"
+  url: "/cv/"

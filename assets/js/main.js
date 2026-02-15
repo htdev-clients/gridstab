@@ -8,7 +8,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Header Scroll Behavior
   const header = document.getElementById('main-header');
-  if (header) {
+  const hasHero = document.querySelector('.min-h-screen') !== null;
+
+  // On pages without a hero, start with solid header immediately
+  if (header && !hasHero) {
+    header.classList.add('bg-white', 'shadow-md');
+    header.classList.remove('bg-transparent');
+    const navLinks = header.querySelectorAll('a:not(.bg-gridstab-orange)');
+    navLinks.forEach(link => {
+      link.classList.remove('text-white');
+      link.classList.add('text-gray-800');
+    });
+    const logo = header.querySelector('.text-2xl');
+    if (logo) {
+      logo.classList.remove('text-white');
+      logo.classList.add('text-gray-800');
+    }
+  }
+
+  if (header && hasHero) {
     window.addEventListener('scroll', () => {
       if (window.scrollY > 50) {
         header.classList.add('bg-white', 'shadow-md');
