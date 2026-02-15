@@ -1,4 +1,8 @@
-/* GridStab Custom Styles */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ===== GridStab Custom Styles ===== */
 
 /* Smooth Scrolling */
 html {
@@ -86,29 +90,10 @@ a {
   transition: all 0.2s ease;
 }
 
-/* Pricing Card Special Effects */
-.scale-105 {
-  transform: scale(1.05);
-}
-
 /* Custom Focus Styles */
 *:focus-visible {
   outline: 2px solid #FF6719;
   outline-offset: 2px;
-}
-
-/* Loading State (optional) */
-@keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
-}
-
-.animate-pulse {
-  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
 /* Responsive Typography Adjustments */
@@ -217,16 +202,6 @@ a {
 
 .hover\:text-primary:hover {
   color: #FF6719;
-}
-
-/* Hidden utility (for error message) */
-.hidden {
-  display: none;
-}
-
-/* Spacing utilities */
-.space-y-12 > * + * {
-  margin-top: 3rem;
 }
 
 /* Responsive adjustments */

@@ -4,29 +4,6 @@
 
   <title>{{ site.title }}</title>
 
-  <!-- Tailwind CSS Play CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            'gridstab-orange': '#FF6719',
-            'gridstab-dark': '#1a1a1a',
-            'gridstab-blue': '#2563eb',
-          },
-          fontFamily: {
-            'sans': ['Inter', 'system-ui', 'sans-serif'],
-            'serif': ['Merriweather', 'Georgia', 'serif'],
-          },
-          backgroundImage: {
-            'hero-gradient': 'linear-gradient(135deg, rgba(26,26,26,0.7), rgba(255,103,25,0.4))',
-          }
-        }
-      }
-    }
-  </script>
-
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -35,8 +12,8 @@
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
 
-  <!-- Custom CSS -->
-  <link rel="stylesheet" href="{{ '/assets/css/custom.css' | relative_url }}">
+  <!-- Tailwind CSS (built via CLI) -->
+  <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
 
   <!-- Favicon -->
   <link rel="icon" type="image/jpeg" href="{{ '/assets/images/favicon.jpg' | relative_url }}">
