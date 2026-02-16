@@ -1,6 +1,7 @@
 <section id="about" class="py-20 bg-white">
-  <div class="container mx-auto px-6">
-    <div class="grid lg:grid-cols-5 gap-12 items-center max-w-7xl mx-auto">
+  <div class="container mx-auto px-6 max-w-7xl">
+    <!-- Top row: Photo + Bio text side by side -->
+    <div class="grid lg:grid-cols-5 gap-12 items-start">
       <!-- Profile Photo -->
       <div class="lg:col-span-2 flex justify-center lg:justify-start">
         <div class="relative">
@@ -26,61 +27,60 @@
           My main focus areas are the study of weak grids with high penetration of converter-based generators. I work on very technical and complex challenges linked to the massive integration of power electronic converters in the power system, from static to dynamic analysis with ElectroMagnetic Transient (EMT) simulations.
         </p>
 
-        <!-- Key Areas -->
-        <div class="space-y-3 mt-6">
-          <h3 class="text-xl font-semibold text-gridstab-dark mb-3">Key Expertise Areas:</h3>
-
-          <div class="flex items-start space-x-3">
-            <div class="w-2 h-2 bg-gridstab-orange rounded-full mt-2.5 flex-shrink-0"></div>
-            <p class="text-gray-700">
-              <strong>Grid-Forming Control:</strong> Advanced control strategies for inverter-based resources in weak grid conditions
-            </p>
-          </div>
-
-          <div class="flex items-start space-x-3">
-            <div class="w-2 h-2 bg-gridstab-orange rounded-full mt-2.5 flex-shrink-0"></div>
-            <p class="text-gray-700">
-              <strong>MTDC Grids:</strong> Operation and control of Multi-Terminal DC grids for efficient power transmission
-            </p>
-          </div>
-
-          <div class="flex items-start space-x-3">
-            <div class="w-2 h-2 bg-gridstab-orange rounded-full mt-2.5 flex-shrink-0"></div>
-            <p class="text-gray-700">
-              <strong>EMT Simulations:</strong> Detailed electromagnetic transient analysis for power system dynamics
-            </p>
-          </div>
-
-          <div class="flex items-start space-x-3">
-            <div class="w-2 h-2 bg-gridstab-orange rounded-full mt-2.5 flex-shrink-0"></div>
-            <p class="text-gray-700">
-              <strong>Low-Inertia Systems:</strong> Stability analysis and control of grids with high renewable penetration
-            </p>
-          </div>
-        </div>
-
-        <!-- Substack Achievement -->
-        <div class="mt-8 p-6 bg-gray-50 rounded-lg border-l-4 border-gridstab-orange">
-          <h3 class="text-xl font-semibold text-gridstab-dark mb-2">GridStab News</h3>
-          <p class="text-gray-700 leading-relaxed">
-            I publish <strong>GridStab News</strong>, a Substack blog where I demystify power system dynamics and stability for a broad audience. My clear, no-equations approach has attracted over <strong>{{ site.subscriber_count }} subscribers</strong> who appreciate my ability to make complex grid challenges accessible and engaging.
-          </p>
-          <a href="{{ site.substack_url }}"
-             target="_blank"
-             rel="noopener noreferrer"
-             class="inline-flex items-center mt-4 text-gridstab-orange hover:text-gridstab-dark transition-colors font-semibold">
-            Read GridStab News
-            <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
-          </a>
-        </div>
-
         <!-- CV Link -->
-        <div class="mt-8">
+        <div class="mt-4">
           <a href="{{ '/cv/' | relative_url }}"
              class="inline-flex items-center text-gridstab-orange hover:text-gridstab-dark transition-colors font-bold text-lg">
             View my detailed CV
             <i data-lucide="chevron-right" class="w-5 h-5 ml-2"></i>
           </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Key Expertise Areas: full width below -->
+    <div class="mt-16">
+      <h3 class="text-3xl font-bold text-gridstab-dark mb-10">Key Expertise Areas</h3>
+
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="bg-white rounded-lg p-6 border-l-4 border-gridstab-orange shadow-md hover:shadow-xl transition-all">
+          <div class="w-12 h-12 bg-gridstab-orange rounded-full flex items-center justify-center mb-4">
+            <i data-lucide="cpu" class="w-6 h-6 text-white"></i>
+          </div>
+          <h4 class="text-lg font-bold text-gridstab-dark mb-2">Grid-Forming Control</h4>
+          <p class="text-gray-600 leading-relaxed">
+            Advanced control strategies for inverter-based resources in weak grid conditions
+          </p>
+        </div>
+
+        <div class="bg-white rounded-lg p-6 border-l-4 border-gridstab-orange shadow-md hover:shadow-xl transition-all">
+          <div class="w-12 h-12 bg-gridstab-orange rounded-full flex items-center justify-center mb-4">
+            <i data-lucide="network" class="w-6 h-6 text-white"></i>
+          </div>
+          <h4 class="text-lg font-bold text-gridstab-dark mb-2">MTDC Grids</h4>
+          <p class="text-gray-600 leading-relaxed">
+            Operation and control of Multi-Terminal DC grids for efficient power transmission
+          </p>
+        </div>
+
+        <div class="bg-white rounded-lg p-6 border-l-4 border-gridstab-orange shadow-md hover:shadow-xl transition-all">
+          <div class="w-12 h-12 bg-gridstab-orange rounded-full flex items-center justify-center mb-4">
+            <i data-lucide="activity" class="w-6 h-6 text-white"></i>
+          </div>
+          <h4 class="text-lg font-bold text-gridstab-dark mb-2">EMT Simulations</h4>
+          <p class="text-gray-600 leading-relaxed">
+            Detailed electromagnetic transient analysis for power system dynamics
+          </p>
+        </div>
+
+        <div class="bg-white rounded-lg p-6 border-l-4 border-gridstab-orange shadow-md hover:shadow-xl transition-all">
+          <div class="w-12 h-12 bg-gridstab-orange rounded-full flex items-center justify-center mb-4">
+            <i data-lucide="wind" class="w-6 h-6 text-white"></i>
+          </div>
+          <h4 class="text-lg font-bold text-gridstab-dark mb-2">Low-Inertia Systems</h4>
+          <p class="text-gray-600 leading-relaxed">
+            Stability analysis and control of grids with high renewable penetration
+          </p>
         </div>
       </div>
     </div>
