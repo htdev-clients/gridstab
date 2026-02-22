@@ -24,6 +24,11 @@ document.addEventListener('DOMContentLoaded', () => {
       logo.classList.remove('text-white');
       logo.classList.add('text-gray-800');
     }
+    const mobileToggle = header.querySelector('#mobile-menu-toggle');
+    if (mobileToggle) {
+      mobileToggle.classList.remove('text-white');
+      mobileToggle.classList.add('text-gray-800');
+    }
   }
 
   if (header && hasHero) {
@@ -38,6 +43,13 @@ document.addEventListener('DOMContentLoaded', () => {
           link.classList.remove('text-white');
           link.classList.add('text-gray-800');
         });
+
+        // Change mobile toggle button color
+        const mobileToggle = header.querySelector('#mobile-menu-toggle');
+        if (mobileToggle) {
+          mobileToggle.classList.remove('text-white');
+          mobileToggle.classList.add('text-gray-800');
+        }
 
         // Change logo color
         const logo = header.querySelector('.text-2xl');
@@ -62,6 +74,13 @@ document.addEventListener('DOMContentLoaded', () => {
           link.classList.add('text-white');
           link.classList.remove('text-gray-800');
         });
+
+        // Restore mobile toggle button color
+        const mobileToggle = header.querySelector('#mobile-menu-toggle');
+        if (mobileToggle) {
+          mobileToggle.classList.add('text-white');
+          mobileToggle.classList.remove('text-gray-800');
+        }
 
         // Restore logo color
         const logo = header.querySelector('.text-2xl');
@@ -108,18 +127,21 @@ document.addEventListener('DOMContentLoaded', () => {
   const mobileMenu = document.getElementById('mobile-menu');
 
   if (menuToggle && mobileMenu) {
+    const setToggleIcon = (iconName) => {
+      const icon = menuToggle.querySelector('[data-lucide]');
+      if (icon && typeof lucide !== 'undefined') {
+        const newIcon = document.createElement('i');
+        newIcon.setAttribute('data-lucide', iconName);
+        newIcon.className = 'w-6 h-6';
+        icon.replaceWith(newIcon);
+        lucide.createIcons();
+      }
+    };
+
     menuToggle.addEventListener('click', () => {
       mobileMenu.classList.toggle('hidden');
-
-      // Animate icon (optional enhancement)
-      const icon = menuToggle.querySelector('[data-lucide]');
-      if (icon) {
-        const isOpen = !mobileMenu.classList.contains('hidden');
-        icon.setAttribute('data-lucide', isOpen ? 'x' : 'menu');
-        if (typeof lucide !== 'undefined') {
-          lucide.createIcons();
-        }
-      }
+      const isOpen = !mobileMenu.classList.contains('hidden');
+      setToggleIcon(isOpen ? 'x' : 'menu');
     });
 
     // Close menu when clicking outside
@@ -128,15 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
           !mobileMenu.contains(e.target) &&
           !menuToggle.contains(e.target)) {
         mobileMenu.classList.add('hidden');
-
-        // Reset icon
-        const icon = menuToggle.querySelector('[data-lucide]');
-        if (icon) {
-          icon.setAttribute('data-lucide', 'menu');
-          if (typeof lucide !== 'undefined') {
-            lucide.createIcons();
-          }
-        }
+        setToggleIcon('menu');
       }
     });
   }
