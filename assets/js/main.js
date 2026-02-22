@@ -132,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (icon && typeof lucide !== 'undefined') {
         const newIcon = document.createElement('i');
         newIcon.setAttribute('data-lucide', iconName);
-        newIcon.className = 'w-6 h-6';
+        newIcon.className = 'w-6 h-6 pointer-events-none';
         icon.replaceWith(newIcon);
         lucide.createIcons();
       }
