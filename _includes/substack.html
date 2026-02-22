@@ -1,0 +1,36 @@
+<section id="substack" class="insights-section py-10 bg-gray-50">
+  <div class="container mx-auto px-4">
+    <h2 class="insights-heading text-4xl md:text-5xl font-bold text-center mb-4 text-gray-900">
+      GridStab News
+    </h2>
+    <p class="text-center text-gray-600 mb-12 max-w-3xl mx-auto text-lg leading-relaxed">
+      I publish <strong>GridStab News</strong>, a Substack blog where I demystify power system dynamics and stability for a broad audience. My clear, no-equations approach has attracted over <strong>{{ site.subscriber_count }} subscribers</strong> who appreciate my ability to make complex grid challenges accessible and engaging.
+    </p>
+
+    <!-- Loading Placeholder -->
+    <div id="loading-placeholder" class="text-center py-8">
+      <p class="text-gray-600 animate-pulse">Loading latest articles...</p>
+    </div>
+
+    <!-- Feed Container (populated by JavaScript) -->
+    <div id="substack-feed" class="max-w-4xl mx-auto space-y-12">
+      <!-- Posts will be inserted here by JavaScript -->
+    </div>
+
+    <!-- Error Message (hidden by default) -->
+    <div id="error-message" class="hidden text-center py-8">
+      <p class="text-gray-600">Unable to load articles. <a href="{{ site.substack_url }}" class="text-primary hover:underline">Visit our Substack</a></p>
+    </div>
+
+    <!-- View All Articles -->
+    <div class="text-center mt-16 mb-20">
+      <a href="{{ site.substack_url }}"
+         target="_blank"
+         rel="noopener noreferrer"
+         class="inline-block bg-gridstab-orange text-white px-8 py-3 rounded-lg hover:bg-opacity-90 hover:shadow-xl transition-all font-semibold shadow-md">
+        View All Articles on Substack
+      </a>
+    </div>
+
+  </div>
+</section>

@@ -156,6 +156,11 @@ a {
   }
 }
 
+/* Sticky header offset for anchor navigation */
+section[id] {
+  scroll-margin-top: 80px;
+}
+
 /* Insights Section - Substack Feed */
 .insights-section {
   background-color: #f9fafb;

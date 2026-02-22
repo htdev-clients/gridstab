@@ -10,97 +10,82 @@ document.addEventListener('DOMContentLoaded', () => {
   const header = document.getElementById('main-header');
   const hasHero = document.querySelector('.min-h-screen') !== null;
 
-  // On pages without a hero, start with solid header immediately
-  if (header && !hasHero) {
+  const setHeaderSolid = () => {
+    if (!header) return;
     header.classList.add('bg-white', 'shadow-md');
     header.classList.remove('bg-transparent');
-    const navLinks = header.querySelectorAll('a:not(.bg-gridstab-orange)');
-    navLinks.forEach(link => {
+    header.querySelectorAll('a:not(.bg-gridstab-orange)').forEach(link => {
       link.classList.remove('text-white');
       link.classList.add('text-gray-800');
     });
     const logo = header.querySelector('.text-2xl');
-    if (logo) {
-      logo.classList.remove('text-white');
-      logo.classList.add('text-gray-800');
-    }
+    if (logo) { logo.classList.remove('text-white'); logo.classList.add('text-gray-800'); }
     const mobileToggle = header.querySelector('#mobile-menu-toggle');
-    if (mobileToggle) {
-      mobileToggle.classList.remove('text-white');
-      mobileToggle.classList.add('text-gray-800');
-    }
+    if (mobileToggle) { mobileToggle.classList.remove('text-white'); mobileToggle.classList.add('text-gray-800'); }
+  };
+
+  const setHeaderTransparent = () => {
+    if (!header) return;
+    header.classList.add('bg-transparent');
+    header.classList.remove('bg-white', 'shadow-md');
+    header.querySelectorAll('a:not(.bg-gridstab-orange)').forEach(link => {
+      link.classList.add('text-white');
+      link.classList.remove('text-gray-800');
+    });
+    const logo = header.querySelector('.text-2xl');
+    if (logo) { logo.classList.add('text-white'); logo.classList.remove('text-gray-800'); }
+    const mobileToggle = header.querySelector('#mobile-menu-toggle');
+    if (mobileToggle) { mobileToggle.classList.add('text-white'); mobileToggle.classList.remove('text-gray-800'); }
+  };
+
+  // On pages without a hero, always solid
+  if (header && !hasHero) {
+    setHeaderSolid();
   }
 
   if (header && hasHero) {
+    // Set correct state on initial load (e.g. when navigating to /#about)
+    if (window.scrollY > 50) {
+      setHeaderSolid();
+    }
+
     window.addEventListener('scroll', () => {
+      const mobileMenuOpen = document.getElementById('mobile-menu') &&
+                             !document.getElementById('mobile-menu').classList.contains('hidden');
+      if (mobileMenuOpen) return; // keep solid while menu is open
       if (window.scrollY > 50) {
-        header.classList.add('bg-white', 'shadow-md');
-        header.classList.remove('bg-transparent');
-
-        // Change text color on scroll
-        const navLinks = header.querySelectorAll('a:not(.bg-gridstab-orange)');
-        navLinks.forEach(link => {
-          link.classList.remove('text-white');
-          link.classList.add('text-gray-800');
-        });
-
-        // Change mobile toggle button color
-        const mobileToggle = header.querySelector('#mobile-menu-toggle');
-        if (mobileToggle) {
-          mobileToggle.classList.remove('text-white');
-          mobileToggle.classList.add('text-gray-800');
-        }
-
-        // Change logo color
-        const logo = header.querySelector('.text-2xl');
-        if (logo) {
-          const logoText = logo.querySelectorAll('span');
-          logoText.forEach((span, index) => {
-            if (index === 0) {
-              span.classList.remove('text-gridstab-orange');
-              span.classList.add('text-gridstab-orange');
-            }
-          });
-          logo.classList.remove('text-white');
-          logo.classList.add('text-gray-800');
-        }
+        setHeaderSolid();
       } else {
-        header.classList.add('bg-transparent');
-        header.classList.remove('bg-white', 'shadow-md');
-
-        // Restore white text color
-        const navLinks = header.querySelectorAll('a:not(.bg-gridstab-orange)');
-        navLinks.forEach(link => {
-          link.classList.add('text-white');
-          link.classList.remove('text-gray-800');
-        });
-
-        // Restore mobile toggle button color
-        const mobileToggle = header.querySelector('#mobile-menu-toggle');
-        if (mobileToggle) {
-          mobileToggle.classList.add('text-white');
-          mobileToggle.classList.remove('text-gray-800');
-        }
-
-        // Restore logo color
-        const logo = header.querySelector('.text-2xl');
-        if (logo) {
-          logo.classList.add('text-white');
-          logo.classList.remove('text-gray-800');
-        }
+        setHeaderTransparent();
       }
     });
   }
 
   // Smooth Scroll for Anchor Links
-  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  // Handles both bare "#hash" and "/baseurl/#hash" same-page links
+  document.querySelectorAll('a[href*="#"]').forEach(anchor => {
     anchor.addEventListener('click', function(e) {
       const href = this.getAttribute('href');
+      const hashIndex = href.indexOf('#');
+      if (hashIndex === -1) return;
 
-      // Ignore if href is just "#"
-      if (href === '#') return;
+      const fragment = href.slice(hashIndex);
+      if (fragment === '#') return;
 
-      const target = document.querySelector(href);
+      // Check if this is a same-page link
+      const isBareFragment = href.startsWith('#');
+      const isSamePage = !isBareFragment && (() => {
+        try {
+          const url = new URL(href, window.location.href);
+          const normalize = p => p.replace(/\/$/, '');
+          return url.origin === window.location.origin &&
+                 normalize(url.pathname) === normalize(window.location.pathname);
+        } catch(err) { return false; }
+      })();
+
+      if (!isBareFragment && !isSamePage) return;
+
+      const target = document.querySelector(fragment);
       if (target) {
         e.preventDefault();
 
@@ -138,10 +123,23 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     };
 
+    const closeMenu = () => {
+      mobileMenu.classList.add('hidden');
+      setToggleIcon('menu');
+      if (hasHero && window.scrollY <= 50) {
+        setHeaderTransparent();
+      }
+    };
+
     menuToggle.addEventListener('click', () => {
       mobileMenu.classList.toggle('hidden');
       const isOpen = !mobileMenu.classList.contains('hidden');
       setToggleIcon(isOpen ? 'x' : 'menu');
+      if (isOpen) {
+        setHeaderSolid();
+      } else if (hasHero && window.scrollY <= 50) {
+        setHeaderTransparent();
+      }
     });
 
     // Close menu when clicking outside
@@ -149,8 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!mobileMenu.classList.contains('hidden') &&
           !mobileMenu.contains(e.target) &&
           !menuToggle.contains(e.target)) {
-        mobileMenu.classList.add('hidden');
-        setToggleIcon('menu');
+        closeMenu();
       }
     });
   }

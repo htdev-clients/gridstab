@@ -1,19 +1,18 @@
-<section id="subscription" class="py-20 bg-white">
-  <div class="container mx-auto px-6">
-    <!-- Section Header -->
-    <div class="text-center mb-16">
-      <h2 class="text-4xl md:text-5xl font-bold text-gridstab-dark mb-4">
+<section id="subscriptions" class="py-20 bg-gray-50">
+  <div class="container mx-auto px-4">
+    <div class="text-center mb-12">
+      <h2 class="text-3xl md:text-4xl font-bold text-gridstab-dark mb-4">
         Subscribe to GridStab News
       </h2>
-      <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-        Join over 1,000 subscribers who get weekly insights on power system dynamics and stability—no equations required
+      <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+        Get full access to weekly insights on grid stability and the energy transition
       </p>
     </div>
 
     <!-- Pricing Grid -->
-    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
+    <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
       {% for tier in site.data.subscriptions %}
-        <div class="relative bg-white rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 border {% if tier.recommended %}border-gridstab-orange border-2 scale-105{% else %}border-gray-200{% endif %}">
+        <div class="relative flex flex-col bg-white rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 border {% if tier.recommended %}border-gridstab-orange border-2 scale-105{% else %}border-gray-200{% endif %}">
           <!-- Recommended Badge -->
           {% if tier.recommended %}
             <div class="absolute -top-4 left-1/2 transform -translate-x-1/2">
@@ -24,7 +23,7 @@
             </div>
           {% endif %}
 
-          <div class="p-8">
+          <div class="flex flex-col flex-1 p-8">
             <!-- Tier Name -->
             <h3 class="text-2xl font-bold text-gridstab-dark mb-2 text-center">
               {{ tier.name }}
@@ -40,7 +39,7 @@
             </div>
 
             <!-- Features -->
-            <ul class="space-y-3 mb-8">
+            <ul class="space-y-3 mb-8 flex-1">
               {% for feature in tier.features %}
                 <li class="flex items-start">
                   <i data-lucide="check" class="w-5 h-5 text-gridstab-orange mr-2 flex-shrink-0 mt-0.5"></i>
@@ -53,7 +52,7 @@
             <a href="{{ tier.cta_url }}"
                target="_blank"
                rel="noopener noreferrer"
-               class="block text-center px-6 py-3 {% if tier.recommended %}bg-gridstab-orange text-white{% else %}border-2 border-gridstab-orange text-gridstab-orange hover:bg-gridstab-orange hover:text-white{% endif %} rounded-lg font-semibold transition-all">
+               class="block text-center px-6 py-3 {% if tier.recommended %}bg-gridstab-orange text-white hover:bg-opacity-90 hover:shadow-xl shadow-md{% else %}border-2 border-gridstab-orange text-gridstab-orange hover:bg-gridstab-orange hover:text-white{% endif %} rounded-lg font-semibold transition-all mt-auto">
               {{ tier.cta_text }}
             </a>
           </div>
