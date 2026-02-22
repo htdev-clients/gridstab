@@ -1,5 +1,5 @@
 <section id="subscriptions" class="py-20 bg-gray-50">
-  <div class="container mx-auto px-4">
+  <div class="subscriptions-wrapper">
     <div class="text-center mb-12">
       <h2 class="text-3xl md:text-4xl font-bold text-gridstab-dark mb-4">
         Subscribe to GridStab News
@@ -10,9 +10,9 @@
     </div>
 
     <!-- Pricing Grid -->
-    <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+    <div class="grid lg:grid-cols-3 gap-8">
       {% for tier in site.data.subscriptions %}
-        <div class="relative flex flex-col bg-white rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 border {% if tier.recommended %}border-gridstab-orange border-2 scale-105{% else %}border-gray-200{% endif %}">
+        <div class="relative flex flex-col bg-white rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 border {% if tier.recommended %}border-gridstab-orange border-2{% else %}border-gray-200{% endif %}">
           <!-- Recommended Badge -->
           {% if tier.recommended %}
             <div class="absolute -top-4 left-1/2 transform -translate-x-1/2">

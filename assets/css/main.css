@@ -22,7 +22,7 @@ html {
 }
 
 .animate-fade-in {
-  animation: fade-in 1s ease-out;
+  animation: fade-in 1s ease-out forwards;
 }
 
 /* Service Card Hover Effect */
@@ -207,6 +207,30 @@ section[id] {
 
 .hover\:text-primary:hover {
   color: #FF6719;
+}
+
+/* Subscriptions: constrain single-column cards, expand for 3-col grid at lg */
+.subscriptions-wrapper {
+  max-width: 42rem;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+@media (min-width: 1024px) {
+  .subscriptions-wrapper {
+    max-width: 64rem;
+  }
+}
+
+/* Services: center the lone last card in the 2-col (md) layout */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .services-grid > *:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+    justify-self: center;
+    width: calc(50% - 1rem);
+  }
 }
 
 /* Responsive adjustments */
