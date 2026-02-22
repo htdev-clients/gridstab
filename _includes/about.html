@@ -1,20 +1,20 @@
 <section id="about" class="py-20 bg-white">
   <div class="container mx-auto px-6 max-w-7xl">
     <!-- Top row: Photo + Bio text side by side -->
-    <div class="grid lg:grid-cols-5 gap-12 items-start">
+    <div class="grid sm:grid-cols-5 gap-6 sm:gap-8 max-w-4xl mx-auto">
       <!-- Profile Photo -->
-      <div class="lg:col-span-2 flex justify-center lg:justify-start">
-        <div class="relative">
+      <div class="sm:col-span-2">
+        <div class="relative w-full h-full min-h-72">
           <img src="{{ '/assets/images/profile.jpg' | relative_url }}"
                alt="Gilles Chaspierre, Power Systems Expert"
-               class="w-72 h-auto rounded-lg shadow-xl"
+               class="w-full h-full object-cover object-top rounded-lg shadow-xl"
                loading="lazy">
           <div class="absolute inset-0 bg-gridstab-orange/10 rounded-lg"></div>
         </div>
       </div>
 
       <!-- Bio Content -->
-      <div class="lg:col-span-3 space-y-6">
+      <div class="sm:col-span-3 space-y-6">
         <h2 class="text-4xl font-bold text-gridstab-dark mb-6">
           About Gilles Chaspierre
         </h2>
