@@ -233,6 +233,18 @@ section[id] {
   }
 }
 
+/* Post meta: smaller font on very small screens to keep date + author on one line */
+@media (max-width: 400px) {
+  .post-meta span {
+    font-size: 0.8rem;
+  }
+}
+@media (max-width: 370px) {
+  .post-meta span {
+    font-size: 0.7rem;
+  }
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .insights-heading {

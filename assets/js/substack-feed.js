@@ -51,7 +51,7 @@ async function loadSubstackFeed() {
             <div class="flex flex-col md:flex-row">
               <!-- Content on the left -->
               <div class="p-8 flex-1">
-                <div class="flex items-center gap-3 mb-4">
+                <div class="post-meta flex items-center gap-3 mb-4">
                   <span class="text-sm text-gray-500">${date}</span>
                   <span class="text-sm text-gray-400">•</span>
                   <span class="text-sm text-gray-500">Dr. Gilles Chaspierre</span>
