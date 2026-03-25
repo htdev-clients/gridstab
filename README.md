@@ -28,17 +28,17 @@ This is a Jekyll-based static site designed for deployment on GitHub Pages. The 
 - **Framework**: Jekyll 4.3
 - **Styling**: Tailwind CSS (via CDN)
 - **Icons**: Lucide Icons
-- **Hosting**: GitHub Pages (Project Site mode)
+- **Hosting**: Cloudflare Pages
 
 ## Deployment
 
-This site is configured for GitHub Pages project site mode with `baseurl: "/website"`.
+Hosted on Cloudflare Pages. Build settings (configured in the Cloudflare dashboard):
 
-To deploy:
-1. Push to GitHub repository
-2. Enable GitHub Pages in repository settings
-3. Select source: `main` branch, root directory
-4. Site will be available at `https://username.github.io/website/`
+- **Build command**: `bundle exec jekyll build`
+- **Build output directory**: `_site`
+- **Environment variable**: `JEKYLL_ENV=production`
+
+No `wrangler.toml` required. Push to `main` branch to trigger a deployment.
 
 ## Structure
 

@@ -5,9 +5,8 @@ author: Gilles Chaspierre
 email: contact@gridstab.com
 
 # Build settings
-# CRITICAL: baseurl must match repository name for GitHub Pages project site mode
-baseurl: "/gridstab"
-url: "https://htdev-clients.github.io"
+baseurl: ""
+url: "https://gridstab.com"
 permalink: pretty
 
 # Plugins (GitHub Pages compatible)
