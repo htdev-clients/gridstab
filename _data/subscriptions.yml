@@ -19,14 +19,3 @@
     - Early access to new content
   cta_text: Subscribe Annually
   cta_url: https://gilleschaspiere.substack.com/subscribe
-
-- name: Annual Premium
-  price: 200€
-  period: /year
-  recommended: true
-  features:
-    - All Annual Basic benefits
-    - Downloadable PDFs of all articles
-    - Premium priority support
-  cta_text: Go Premium
-  cta_url: https://gilleschaspiere.substack.com/subscribe
