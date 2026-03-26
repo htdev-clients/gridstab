@@ -12,17 +12,7 @@
     <!-- Pricing Grid -->
     <div class="grid lg:grid-cols-2 gap-8 max-w-3xl mx-auto">
       {% for tier in site.data.subscriptions %}
-        <div class="relative flex flex-col bg-white rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 border {% if tier.recommended %}border-gridstab-orange border-2{% else %}border-gray-200{% endif %}">
-          <!-- Recommended Badge -->
-          {% if tier.recommended %}
-            <div class="absolute -top-4 left-1/2 transform -translate-x-1/2">
-              <span class="bg-gridstab-orange text-white px-4 py-1 rounded-full text-sm font-semibold flex items-center">
-                <i data-lucide="star" class="w-4 h-4 mr-1"></i>
-                Recommended
-              </span>
-            </div>
-          {% endif %}
-
+        <div class="flex flex-col bg-white rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-200">
           <div class="flex flex-col flex-1 p-8">
             <!-- Tier Name -->
             <h3 class="text-2xl font-bold text-gridstab-dark mb-2 text-center">
@@ -52,7 +42,7 @@
             <a href="{{ tier.cta_url }}"
                target="_blank"
                rel="noopener noreferrer"
-               class="block text-center px-6 py-3 {% if tier.recommended %}bg-gridstab-orange text-white hover:bg-opacity-90 hover:shadow-xl shadow-md{% else %}border-2 border-gridstab-orange text-gridstab-orange hover:bg-gridstab-orange hover:text-white{% endif %} rounded-lg font-semibold transition-all mt-auto">
+               class="block text-center px-6 py-3 border-2 border-gridstab-orange text-gridstab-orange hover:bg-gridstab-orange hover:text-white rounded-lg font-semibold transition-all mt-auto">
               {{ tier.cta_text }}
             </a>
           </div>

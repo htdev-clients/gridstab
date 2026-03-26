@@ -7,7 +7,10 @@ async function loadSubstackFeed() {
 
   try {
     // Use RSS2JSON API (free CORS proxy for RSS feeds)
-    const response = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(RSS_URL)}`);
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 8000);
+    const response = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(RSS_URL)}`, { signal: controller.signal });
+    clearTimeout(timeoutId);
     const data = await response.json();
 
     if (data.status !== 'ok') throw new Error('Failed to fetch RSS feed');
