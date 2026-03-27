@@ -7,26 +7,26 @@ permalink: /404.html
 <main class="flex flex-col items-center justify-center min-h-screen bg-gray-50 px-6 text-center">
 
   <!-- Branding -->
-  <a href="{{ '/' | relative_url }}" class="mb-16 text-4xl font-bold text-gridstab-dark" aria-label="GridStab home">
+  <a href="{{ '/' | relative_url }}" class="mb-10 md:mb-16 text-4xl md:text-6xl font-bold text-gridstab-dark" aria-label="GridStab home">
     <span class="text-gridstab-orange">Grid</span>Stab
   </a>
 
   <!-- Error -->
-  <span class="text-8xl font-bold text-gridstab-orange mb-4">404</span>
-  <h1 class="text-3xl font-bold text-gridstab-dark mb-4">Page not found</h1>
-  <p class="text-lg text-gray-600 mb-10 max-w-md">
+  <span class="text-6xl md:text-8xl font-bold text-gridstab-orange mb-4">404</span>
+  <h1 class="text-2xl md:text-3xl font-bold text-gridstab-dark mb-4">Page not found</h1>
+  <p class="text-base md:text-lg text-gray-600 mb-10 max-w-md">
     The page you're looking for doesn't exist or may have been moved.
   </p>
 
   <!-- CTAs -->
-  <div class="flex flex-col sm:flex-row gap-4 justify-center">
+  <div class="flex flex-col sm:flex-row gap-4 justify-center w-full max-w-sm sm:max-w-none">
     <a href="{{ '/' | relative_url }}"
-       class="inline-flex items-center justify-center px-8 py-3 bg-gridstab-orange text-white rounded-lg hover:bg-opacity-90 transition-all font-semibold">
+       class="inline-flex items-center justify-center px-6 md:px-8 py-3 bg-gridstab-orange text-white rounded-lg hover:bg-opacity-90 transition-all font-semibold">
       <i data-lucide="house" class="w-5 h-5 mr-2"></i>
       Go to Homepage
     </a>
     <a href="{{ '/#contact' | relative_url }}"
-       class="inline-flex items-center justify-center px-8 py-3 border-2 border-gridstab-orange text-gridstab-orange rounded-lg hover:bg-gridstab-orange hover:text-white transition-all font-semibold">
+       class="inline-flex items-center justify-center px-6 md:px-8 py-3 border-2 border-gridstab-orange text-gridstab-orange rounded-lg hover:bg-gridstab-orange hover:text-white transition-all font-semibold">
       <i data-lucide="mail" class="w-5 h-5 mr-2"></i>
       Get in Touch
     </a>
