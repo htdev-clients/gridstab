@@ -1,10 +1,44 @@
 // GridStab Main JavaScript
 
-document.addEventListener('DOMContentLoaded', () => {
-  // Initialize Lucide icons
-  if (typeof lucide !== 'undefined') {
-    lucide.createIcons();
+// ---- Local Icon Loader ----
+// Replaces <i data-lucide="name"> elements with SVG files from /assets/icons/
+
+const _iconCache = {};
+
+async function _fetchIcon(name) {
+  if (_iconCache[name] !== undefined) return _iconCache[name];
+  try {
+    const res = await fetch(`/assets/icons/${name}.svg`);
+    if (!res.ok) throw new Error(`${res.status}`);
+    _iconCache[name] = await res.text();
+  } catch (e) {
+    console.warn(`Icon not found: ${name}`);
+    _iconCache[name] = null;
   }
+  return _iconCache[name];
+}
+
+async function createIcons(root = document) {
+  const elements = [...root.querySelectorAll('[data-lucide]')];
+  if (!elements.length) return;
+  const names = [...new Set(elements.map(el => el.getAttribute('data-lucide')))];
+  await Promise.all(names.map(_fetchIcon));
+  elements.forEach(el => {
+    const svgText = _iconCache[el.getAttribute('data-lucide')];
+    if (!svgText) return;
+    const tmp = document.createElement('div');
+    tmp.innerHTML = svgText;
+    const svg = tmp.querySelector('svg');
+    if (!svg) return;
+    svg.setAttribute('class', el.getAttribute('class') || '');
+    svg.setAttribute('aria-hidden', 'true');
+    el.replaceWith(svg);
+  });
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  // Initialize local icons
+  await createIcons();
 
   // Header Scroll Behavior
   const header = document.getElementById('main-header');
@@ -112,29 +146,28 @@ document.addEventListener('DOMContentLoaded', () => {
   const mobileMenu = document.getElementById('mobile-menu');
 
   if (menuToggle && mobileMenu) {
-    const setToggleIcon = (iconName) => {
-      const icon = menuToggle.querySelector('[data-lucide]');
-      if (icon && typeof lucide !== 'undefined') {
-        const newIcon = document.createElement('i');
-        newIcon.setAttribute('data-lucide', iconName);
-        newIcon.className = 'w-6 h-6 pointer-events-none';
-        icon.replaceWith(newIcon);
-        lucide.createIcons();
-      }
+    const setToggleIcon = async (iconName) => {
+      const icon = menuToggle.querySelector('[data-lucide], svg');
+      if (!icon) return;
+      const newEl = document.createElement('i');
+      newEl.setAttribute('data-lucide', iconName);
+      newEl.className = 'w-6 h-6 pointer-events-none';
+      icon.replaceWith(newEl);
+      await createIcons(menuToggle);
     };
 
-    const closeMenu = () => {
+    const closeMenu = async () => {
       mobileMenu.classList.add('hidden');
-      setToggleIcon('menu');
+      await setToggleIcon('menu');
       if (hasHero && window.scrollY <= 50) {
         setHeaderTransparent();
       }
     };
 
-    menuToggle.addEventListener('click', () => {
+    menuToggle.addEventListener('click', async () => {
       mobileMenu.classList.toggle('hidden');
       const isOpen = !mobileMenu.classList.contains('hidden');
-      setToggleIcon(isOpen ? 'x' : 'menu');
+      await setToggleIcon(isOpen ? 'x' : 'menu');
       if (isOpen) {
         setHeaderSolid();
       } else if (hasHero && window.scrollY <= 50) {
@@ -170,16 +203,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // Observe service cards
   document.querySelectorAll('.service-card').forEach(card => {
     observer.observe(card);
-  });
-
-  // External link handler (add icon if not present)
-  document.querySelectorAll('a[target="_blank"]').forEach(link => {
-    if (!link.querySelector('[data-lucide="external-link"]')) {
-      // Icon already added in HTML, just ensure they're rendered
-      if (typeof lucide !== 'undefined') {
-        lucide.createIcons();
-      }
-    }
   });
 
   // Log initialization

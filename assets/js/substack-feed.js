@@ -1,6 +1,8 @@
 // Fetch and display Substack RSS feed
 async function loadSubstackFeed() {
-  const RSS_URL = 'https://gilleschaspiere.substack.com/feed';
+  const section = document.querySelector('#substack[data-substack-url]');
+  const substackBaseUrl = section ? section.getAttribute('data-substack-url') : 'https://gilleschaspiere.substack.com';
+  const RSS_URL = substackBaseUrl.replace(/\/$/, '') + '/feed';
   const feedContainer = document.getElementById('substack-feed');
   const loadingPlaceholder = document.getElementById('loading-placeholder');
   const errorMessage = document.getElementById('error-message');

@@ -4,30 +4,32 @@ title: Page Not Found
 permalink: /404.html
 ---
 
-{% include header.html %}
+<main class="flex flex-col items-center justify-center min-h-screen bg-gray-50 px-6 text-center">
 
-<main class="pt-20 min-h-screen flex items-center bg-gray-50">
-  <div class="container mx-auto px-6 py-20 text-center max-w-2xl">
-    <div class="mb-8">
-      <span class="text-8xl font-bold text-gridstab-orange">404</span>
-    </div>
-    <h1 class="text-3xl font-bold text-gridstab-dark mb-4">Page not found</h1>
-    <p class="text-lg text-gray-600 mb-10">
-      The page you're looking for doesn't exist or may have been moved.
-    </p>
-    <div class="flex flex-col sm:flex-row gap-4 justify-center">
-      <a href="{{ '/' | relative_url }}"
-         class="inline-flex items-center justify-center px-8 py-3 bg-gridstab-orange text-white rounded-lg hover:bg-opacity-90 transition-all font-semibold">
-        <i data-lucide="home" class="w-5 h-5 mr-2"></i>
-        Go to Homepage
-      </a>
-      <a href="{{ '/#contact' | relative_url }}"
-         class="inline-flex items-center justify-center px-8 py-3 border-2 border-gridstab-orange text-gridstab-orange rounded-lg hover:bg-gridstab-orange hover:text-white transition-all font-semibold">
-        <i data-lucide="mail" class="w-5 h-5 mr-2"></i>
-        Get in Touch
-      </a>
-    </div>
+  <!-- Branding -->
+  <a href="{{ '/' | relative_url }}" class="mb-16 text-2xl font-bold text-gridstab-dark" aria-label="GridStab home">
+    <span class="text-gridstab-orange">Grid</span>Stab
+  </a>
+
+  <!-- Error -->
+  <span class="text-8xl font-bold text-gridstab-orange mb-4">404</span>
+  <h1 class="text-3xl font-bold text-gridstab-dark mb-4">Page not found</h1>
+  <p class="text-lg text-gray-600 mb-10 max-w-md">
+    The page you're looking for doesn't exist or may have been moved.
+  </p>
+
+  <!-- CTAs -->
+  <div class="flex flex-col sm:flex-row gap-4 justify-center">
+    <a href="{{ '/' | relative_url }}"
+       class="inline-flex items-center justify-center px-8 py-3 bg-gridstab-orange text-white rounded-lg hover:bg-opacity-90 transition-all font-semibold">
+      <i data-lucide="house" class="w-5 h-5 mr-2"></i>
+      Go to Homepage
+    </a>
+    <a href="{{ '/#contact' | relative_url }}"
+       class="inline-flex items-center justify-center px-8 py-3 border-2 border-gridstab-orange text-gridstab-orange rounded-lg hover:bg-gridstab-orange hover:text-white transition-all font-semibold">
+      <i data-lucide="mail" class="w-5 h-5 mr-2"></i>
+      Get in Touch
+    </a>
   </div>
-</main>
 
-{% include footer.html %}
+</main>
