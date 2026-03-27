@@ -18,7 +18,6 @@ module.exports = {
       },
       fontFamily: {
         'sans': ['Inter', 'system-ui', 'sans-serif'],
-        'serif': ['Merriweather', 'Georgia', 'serif'],
       },
       backgroundImage: {
         'hero-gradient': 'linear-gradient(135deg, rgba(26,26,26,0.7), rgba(255,103,25,0.4))',
