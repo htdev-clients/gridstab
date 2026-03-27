@@ -5,10 +5,13 @@
       <!-- Profile Photo -->
       <div class="sm:col-span-2">
         <div class="relative w-full h-full min-h-72">
-          <img src="{{ '/assets/images/profile.jpg' | relative_url }}"
-               alt="Gilles Chaspierre, Power Systems Expert"
-               class="w-full h-full object-cover object-top rounded-lg shadow-xl"
-               loading="lazy">
+          <picture>
+            <source type="image/webp" srcset="{{ '/assets/images/profile.webp' | relative_url }}">
+            <img src="{{ '/assets/images/profile.jpg' | relative_url }}"
+                 alt="Gilles Chaspierre, Power Systems Expert"
+                 class="w-full h-full object-cover object-top rounded-lg shadow-xl"
+                 loading="lazy">
+          </picture>
           <div class="absolute inset-0 bg-gridstab-orange/10 rounded-lg"></div>
         </div>
       </div>

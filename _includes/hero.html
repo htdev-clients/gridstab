@@ -1,7 +1,17 @@
 <section class="relative min-h-screen flex items-center justify-center">
   <!-- Background Image -->
-  <div class="absolute inset-0 bg-cover bg-center"
-       style="background-image: url('{{ '/assets/images/europenight.jpg' | relative_url }}');">
+  <div class="absolute inset-0 overflow-hidden">
+    <picture>
+      <source type="image/webp" media="(max-width: 799px)" srcset="{{ '/assets/images/europenight-800.webp' | relative_url }}">
+      <source type="image/jpeg" media="(max-width: 799px)" srcset="{{ '/assets/images/europenight-800.jpg' | relative_url }}">
+      <source type="image/webp" srcset="{{ '/assets/images/europenight-1200.webp' | relative_url }}">
+      <source type="image/jpeg" srcset="{{ '/assets/images/europenight-1200.jpg' | relative_url }}">
+      <img src="{{ '/assets/images/europenight.jpg' | relative_url }}"
+           alt=""
+           aria-hidden="true"
+           class="w-full h-full object-cover object-center"
+           fetchpriority="high">
+    </picture>
   </div>
 
   <!-- Gradient Overlay -->
