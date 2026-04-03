@@ -1,13 +1,13 @@
 <section id="book" class="py-20 bg-gray-50">
   <div class="container mx-auto px-6 max-w-5xl">
-    <div class="grid lg:grid-cols-2 gap-16 items-stretch">
+    <div class="grid lg:grid-cols-2 gap-16 items-center">
 
-      <!-- Book Cover -->
-      <div class="flex justify-center lg:justify-end">
+      <!-- Book Cover (desktop only, left column) -->
+      <div class="hidden lg:flex justify-end">
         <img
           src="{{ '/assets/images/book-cover.jpg' | relative_url }}"
           alt="Book cover: Grid Stability in the Era of Inverter-Dominated Power Systems by Gilles Chaspierre"
-          class="w-full max-h-[400px] object-cover object-top lg:w-auto lg:max-h-[640px] lg:object-none rounded-lg shadow-2xl"
+          class="w-auto max-h-[640px] rounded-lg shadow-2xl"
         />
       </div>
 
@@ -43,6 +43,15 @@
             How can we design solutions that keep the grid resilient and reliable?
           </li>
         </ul>
+
+        <!-- Book Cover (mobile only, between text and button) -->
+        <div class="lg:hidden flex justify-center">
+          <img
+            src="{{ '/assets/images/book-cover.jpg' | relative_url }}"
+            alt="Book cover: Grid Stability in the Era of Inverter-Dominated Power Systems by Gilles Chaspierre"
+            class="w-full max-h-[400px] object-cover object-top rounded-lg shadow-2xl"
+          />
+        </div>
 
         <!-- Contact to Order -->
         <div class="pt-2">
