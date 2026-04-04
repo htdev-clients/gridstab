@@ -1,0 +1,30 @@
+# Cloudflare Worker — Queue Consumer for PDF watermarking
+# Deploy with: cd workers/watermark && npm install && npx wrangler deploy
+# This Worker is separate from the Pages Functions but shares the same R2/KV resources.
+#
+# SECRET KEYS must be set with: npx wrangler secret put RESEND_API_KEY
+# Required secrets:
+#   RESEND_API_KEY      — from Resend dashboard
+#   RESEND_FROM_EMAIL   — e.g. books@gridstab.com
+
+name = "gridstab-watermark"
+main = "index.js"
+compatibility_date = "2024-09-23"
+
+# Queue consumer — receives jobs enqueued by the Pages webhook function
+[[queues.consumers]]
+queue = "book-watermark-queue"
+max_batch_size = 1
+max_batch_timeout = 30
+max_retries = 3
+
+# R2 Bucket — same bucket as Pages Functions
+[[r2_buckets]]
+binding = "BOOK_BUCKET"
+bucket_name = "gridstab-books"
+
+# KV Namespace — same namespace as Pages Functions
+[[kv_namespaces]]
+binding = "PURCHASES_KV"
+id = "REPLACE_WITH_PRODUCTION_KV_ID"
+preview_id = "REPLACE_WITH_PREVIEW_KV_ID"

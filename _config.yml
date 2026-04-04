@@ -22,11 +22,15 @@ exclude:
   - vendor
   - README.md
   - CLAUDE.md
+  - BOOK_PURCHASE_PLAN.md
+  - todo.md
   - .gitignore
   - description.md
   - package.json
   - package-lock.json
   - tailwind.config.js
+  - wrangler.toml
+  - workers/
 
 # External links
 substack_url: https://gilleschaspiere.substack.com/

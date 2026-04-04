@@ -1,5 +1,6 @@
 _site/
 node_modules/
+workers/watermark/node_modules/
 .sass-cache/
 .jekyll-cache/
 .jekyll-metadata
@@ -10,3 +11,4 @@ Gemfile.lock
 CLAUDE.md
 .vscode/
 deploy.sh
+todo.md
