@@ -21,9 +21,7 @@ exclude:
   - node_modules
   - vendor
   - README.md
-  - CLAUDE.md
   - BOOK_PURCHASE_PLAN.md
-  - todo.md
   - .gitignore
   - description.md
   - package.json
