@@ -4,11 +4,11 @@
 - title: Services
   url: "#services"
 
-- title: Book
-  url: "#book"
-
 - title: GridStab News
   url: "#substack"
+
+- title: Book
+  url: "#book"
 
 - title: CV
   url: "/cv/"

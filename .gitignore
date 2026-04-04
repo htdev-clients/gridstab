@@ -9,3 +9,4 @@ vendor/
 Gemfile.lock
 CLAUDE.md
 .vscode/
+deploy.sh
