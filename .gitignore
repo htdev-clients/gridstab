@@ -7,3 +7,5 @@ vendor/
 .bundle/
 .DS_Store
 Gemfile.lock
+CLAUDE.md
+.vscode/
