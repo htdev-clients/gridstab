@@ -4,11 +4,19 @@
 
       <!-- Book Cover (desktop only, left column) -->
       <div class="hidden lg:flex justify-end">
-        <img
-          src="{{ '/assets/images/book-cover.jpg' | relative_url }}"
-          alt="Book cover: Grid Stability in the Era of Inverter-Dominated Power Systems by Gilles Chaspierre"
-          class="w-auto max-h-[640px] rounded-lg shadow-2xl"
-        />
+        <div class="flex flex-col items-start gap-3">
+          <img
+            src="{{ '/assets/images/book-cover.jpg' | relative_url }}"
+            alt="Book cover: Grid Stability in the Era of Inverter-Dominated Power Systems by Gilles Chaspierre"
+            class="w-auto max-h-[640px] rounded-lg shadow-2xl cursor-pointer hover:opacity-90 transition-opacity"
+            onclick="openPreviewModal()"
+          />
+          <button onclick="openPreviewModal()"
+                  class="inline-flex items-center gap-2 text-lg mt-3 ml-2 text-gridstab-orange hover:opacity-75 transition-opacity">
+            <i data-lucide="book-open" class="w-6 h-6"></i>
+            Preview
+          </button>
+        </div>
       </div>
 
       <!-- Book Info -->
@@ -45,25 +53,129 @@
         </ul>
 
         <!-- Book Cover (mobile only, between text and button) -->
-        <div class="lg:hidden flex justify-center">
+        <div class="lg:hidden flex flex-col items-center gap-3">
           <img
             src="{{ '/assets/images/book-cover.jpg' | relative_url }}"
             alt="Book cover: Grid Stability in the Era of Inverter-Dominated Power Systems by Gilles Chaspierre"
-            class="w-full max-h-[400px] object-cover object-top rounded-lg shadow-2xl"
+            class="w-full max-h-[400px] object-cover object-top rounded-lg shadow-2xl cursor-pointer hover:opacity-90 transition-opacity"
+            onclick="openPreviewModal()"
           />
+          <button onclick="openPreviewModal()"
+                  class="inline-flex items-center gap-2 text-lg mt-3 text-gridstab-orange hover:opacity-75 transition-opacity">
+            <i data-lucide="book-open" class="w-6 h-6"></i>
+            Preview
+          </button>
         </div>
 
-        <!-- Contact to Order -->
+        <!-- Buy Button -->
         <div class="pt-2">
-          <a href="mailto:{{ site.email }}?subject=Book%20Order%20%E2%80%94%20Grid%20Stability%20in%20the%20Era%20of%20Inverter-Dominated%20Power%20Systems"
-             class="inline-flex items-center gap-2 bg-gridstab-orange text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-opacity-90 transition-all shadow-md">
-            <i data-lucide="mail" class="w-5 h-5"></i>
-            Get the Book
-          </a>
-          <p class="text-sm text-gray-500 mt-3">Contact Gilles directly to order your copy.</p>
+          <div class="inline-flex items-center gap-2 bg-gray-200 text-gray-400 px-8 py-4 rounded-lg font-semibold text-lg cursor-not-allowed select-none">
+            <i data-lucide="shopping-cart" class="w-5 h-5"></i>
+            Buy the Book
+            <span class="text-xs font-medium bg-gray-300 text-gray-500 px-2 py-0.5 rounded-full ml-1">Coming soon</span>
+          </div>
         </div>
       </div>
 
     </div>
   </div>
 </section>
+
+<!-- Book Preview Modal -->
+<div id="preview-modal"
+     class="fixed inset-0 z-50 hidden bg-black/80"
+     role="dialog"
+     aria-modal="true"
+     aria-label="Book preview">
+
+  <!-- Close button — dark pill so it's readable on any background -->
+  <button onclick="window.closePreviewModal()"
+          class="absolute top-3 right-3 z-10 flex items-center justify-center p-2 rounded-full bg-black/50 lg:bg-transparent lg:rounded-none text-white lg:text-white/60 hover:bg-black/70 lg:hover:bg-transparent lg:hover:text-white transition-colors"
+          aria-label="Close preview">
+    <i data-lucide="x" class="w-5 h-5 lg:w-7 lg:h-7"></i>
+  </button>
+
+  <!-- Mobile: scrollable vertical stack of all pages -->
+  <div class="lg:hidden h-full overflow-y-auto">
+    <div class="p-3 space-y-3">
+      <img src="{{ '/assets/images/book-preview/book-preview_page-0001.jpg' | relative_url }}" alt="Preview page 1" class="w-full rounded shadow-lg">
+      <img src="{{ '/assets/images/book-preview/book-preview_page-0002.jpg' | relative_url }}" alt="Preview page 2" class="w-full rounded shadow-lg">
+      <img src="{{ '/assets/images/book-preview/book-preview_page-0003.jpg' | relative_url }}" alt="Preview page 3" class="w-full rounded shadow-lg">
+      <img src="{{ '/assets/images/book-preview/book-preview_page-0004.jpg' | relative_url }}" alt="Preview page 4" class="w-full rounded shadow-lg">
+      <img src="{{ '/assets/images/book-preview/book-preview_page-0005.jpg' | relative_url }}" alt="Preview page 5" class="w-full rounded shadow-lg">
+    </div>
+  </div>
+
+  <!-- Desktop: single image with side nav buttons -->
+  <div class="hidden lg:flex items-center justify-center h-full px-12 py-4"
+       onclick="window.closePreviewModal()">
+
+    <button id="preview-prev"
+            onclick="event.stopPropagation(); previewNav(-1)"
+            class="absolute left-2 p-4 text-white/60 hover:text-white transition-colors disabled:opacity-20 disabled:cursor-not-allowed"
+            aria-label="Previous page">
+      <i data-lucide="chevron-right" class="w-10 h-10 rotate-180"></i>
+    </button>
+
+    <img id="preview-image"
+         src=""
+         alt="Book preview page"
+         class="max-h-full max-w-full object-contain rounded shadow-2xl select-none"
+         onclick="event.stopPropagation()" />
+
+    <button id="preview-next"
+            onclick="event.stopPropagation(); previewNav(1)"
+            class="absolute right-2 p-4 text-white/60 hover:text-white transition-colors disabled:opacity-20 disabled:cursor-not-allowed"
+            aria-label="Next page">
+      <i data-lucide="chevron-right" class="w-10 h-10"></i>
+    </button>
+
+  </div>
+
+</div>
+
+<script>
+  (function () {
+    var pages = [
+      '{{ "/assets/images/book-preview/book-preview_page-0001.jpg" | relative_url }}',
+      '{{ "/assets/images/book-preview/book-preview_page-0002.jpg" | relative_url }}',
+      '{{ "/assets/images/book-preview/book-preview_page-0003.jpg" | relative_url }}',
+      '{{ "/assets/images/book-preview/book-preview_page-0004.jpg" | relative_url }}',
+      '{{ "/assets/images/book-preview/book-preview_page-0005.jpg" | relative_url }}',
+    ];
+    var current = 0;
+
+    function updatePage() {
+      document.getElementById('preview-image').src = pages[current];
+      document.getElementById('preview-prev').disabled = current === 0;
+      document.getElementById('preview-next').disabled = current === pages.length - 1;
+    }
+
+    window.openPreviewModal = function () {
+      current = 0;
+      updatePage();
+      document.getElementById('preview-modal').classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    };
+
+    window.closePreviewModal = function () {
+      document.getElementById('preview-modal').classList.add('hidden');
+      document.getElementById('preview-image').src = '';
+      document.body.style.overflow = '';
+    };
+
+    window.previewNav = function (dir) {
+      current = Math.min(Math.max(current + dir, 0), pages.length - 1);
+      updatePage();
+    };
+
+    // Keyboard: arrows and ESC
+    document.addEventListener('keydown', function (e) {
+      var modal = document.getElementById('preview-modal');
+      if (modal.classList.contains('hidden')) return;
+      if (e.key === 'Escape') window.closePreviewModal();
+      if (e.key === 'ArrowRight') window.previewNav(1);
+      if (e.key === 'ArrowLeft') window.previewNav(-1);
+    });
+  })();
+</script>
