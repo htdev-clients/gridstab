@@ -22,9 +22,3 @@ max_retries = 3
 [[r2_buckets]]
 binding = "BOOK_BUCKET"
 bucket_name = "gridstab-books"
-
-# KV Namespace — same namespace as Pages Functions
-[[kv_namespaces]]
-binding = "PURCHASES_KV"
-id = "REPLACE_WITH_PRODUCTION_KV_ID"
-preview_id = "REPLACE_WITH_PREVIEW_KV_ID"

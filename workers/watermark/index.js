@@ -5,7 +5,7 @@ import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
  * Triggered by a message from the Pages webhook function after a successful Stripe payment.
  *
  * Each job contains: { sessionId, email, name, purchaseDate }
- * On completion: watermarked PDF stored in R2, token written to KV, download email sent.
+ * On completion: watermarked PDF sent as email attachment, then discarded — not stored anywhere.
  */
 export default {
   async queue(batch, env) {
@@ -21,7 +21,7 @@ export default {
   },
 };
 
-async function processJob({ sessionId, email, name, purchaseDate }, env) {
+async function processJob({ email, name, purchaseDate }, env) {
   // 1. Load original PDF from R2
   const original = await env.BOOK_BUCKET.get('book/original.pdf');
   if (!original) throw new Error('Original PDF not found at book/original.pdf in R2');
@@ -30,29 +30,8 @@ async function processJob({ sessionId, email, name, purchaseDate }, env) {
   // 2. Watermark all pages with the buyer's email and purchase date
   const watermarked = await watermarkPDF(pdfBytes, email, purchaseDate);
 
-  // 3. Store the personalised copy in R2
-  const r2Key = `book/purchases/${sessionId}.pdf`;
-  await env.BOOK_BUCKET.put(r2Key, watermarked, {
-    httpMetadata: { contentType: 'application/pdf' },
-  });
-
-  // 4. Generate a unique, permanent download token
-  const token = crypto.randomUUID();
-
-  // 5. Write token record and email → token reverse lookup to KV
-  const record = {
-    email,
-    name,
-    sessionId,
-    r2Key,
-    createdAt: new Date().toISOString(),
-    downloadCount: 0,
-  };
-  await env.PURCHASES_KV.put(`token:${token}`, JSON.stringify(record));
-  await env.PURCHASES_KV.put(`email:${email}`, JSON.stringify({ latestToken: token }));
-
-  // 6. Send the download link by email
-  await sendDownloadEmail({ email, name, token, env });
+  // 3. Send the watermarked PDF as an email attachment — then discard it
+  await sendBookEmail({ email, name, pdfBytes: watermarked, env });
 }
 
 async function watermarkPDF(pdfBytes, email, purchaseDate) {
@@ -78,9 +57,18 @@ async function watermarkPDF(pdfBytes, email, purchaseDate) {
   return await pdfDoc.save();
 }
 
-async function sendDownloadEmail({ email, name, token, env }) {
-  const downloadUrl = `https://gridstab.com/api/download?token=${token}`;
+function toBase64(arrayBuffer) {
+  const bytes = new Uint8Array(arrayBuffer);
+  let binary = '';
+  for (let i = 0; i < bytes.length; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return btoa(binary);
+}
+
+async function sendBookEmail({ email, name, pdfBytes, env }) {
   const firstName = name ? name.split(' ')[0] : 'there';
+  const base64Pdf = toBase64(pdfBytes);
 
   const html = `<!DOCTYPE html>
 <html lang="en">
@@ -93,23 +81,16 @@ async function sendDownloadEmail({ email, name, token, env }) {
 
   <p style="font-size: 16px; line-height: 1.7; margin-bottom: 24px;">
     Thank you for purchasing <strong>Grid Stability in the Era of Inverter-Dominated Power Systems</strong>.
-    Your personalised copy is ready to download.
+    Your personalised copy is attached to this email.
   </p>
 
-  <div style="text-align: center; margin: 40px 0;">
-    <a href="${downloadUrl}"
-       style="background-color: #FF6719; color: #ffffff; padding: 16px 40px; text-decoration: none; border-radius: 8px; font-family: Arial, sans-serif; font-size: 16px; font-weight: bold; display: inline-block;">
-      Download your book
-    </a>
-  </div>
-
-  <p style="font-size: 14px; color: #666666; line-height: 1.7; margin-bottom: 16px;">
-    This link is personal to you — please keep this email safe.
-    You can use it to download the book again at any time.
+  <p style="font-size: 16px; line-height: 1.7; margin-bottom: 24px;">
+    Please save it to your device or cloud storage — this is a one-time delivery and the attachment
+    will not be re-sent automatically. If you ever lose the file, reach out to Gilles directly.
   </p>
 
   <p style="font-size: 14px; color: #666666; line-height: 1.7;">
-    If you have any questions, feel free to reach out at
+    Questions or feedback? Feel free to write to
     <a href="mailto:contact@gridstab.com" style="color: #FF6719; text-decoration: none;">contact@gridstab.com</a>.
   </p>
 
@@ -132,8 +113,14 @@ async function sendDownloadEmail({ email, name, token, env }) {
     body: JSON.stringify({
       from: env.RESEND_FROM_EMAIL,
       to: [email],
-      subject: 'Your book is ready — Grid Stability in the Era of Inverter-Dominated Power Systems',
+      subject: 'Your book — Grid Stability in the Era of Inverter-Dominated Power Systems',
       html,
+      attachments: [
+        {
+          filename: 'Grid-Stability-Gilles-Chaspierre.pdf',
+          content: base64Pdf,
+        },
+      ],
     }),
   });
 

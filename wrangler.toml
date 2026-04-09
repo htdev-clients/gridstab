@@ -12,21 +12,18 @@
 #   RESEND_FROM_EMAIL       — e.g. books@gridstab.com (verified domain in Resend)
 # ─────────────────────────────────────────────────────────────────────────────
 #
-# CF BINDINGS must be added here (and in CF dashboard) once infrastructure is set up:
-#
-#   [[kv_namespaces]]
-#   binding = "PURCHASES_KV"
-#   id = "<id from CF dashboard → Workers & Pages → KV>"
-#   preview_id = "<same or separate preview namespace id>"
-#
-#   [[r2_buckets]]
-#   binding = "BOOK_BUCKET"
-#   bucket_name = "gridstab-books"
-#
-#   [[queues.producers]]
-#   queue = "book-watermark-queue"
-#   binding = "WATERMARK_QUEUE"
 # ─────────────────────────────────────────────────────────────────────────────
 
 name = "gridstab"
 pages_build_output_dir = "_site"
+
+[vars]
+RESEND_FROM_EMAIL = "books@gridstab.com"
+
+[[r2_buckets]]
+binding = "BOOK_BUCKET"
+bucket_name = "gridstab-books"
+
+[[queues.producers]]
+queue = "book-watermark-queue"
+binding = "WATERMARK_QUEUE"
