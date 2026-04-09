@@ -39,7 +39,9 @@ async function watermarkPDF(pdfBytes, email, purchaseDate) {
   const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
   const pages = pdfDoc.getPages();
 
-  const watermarkText = `Licensed to: ${email} — ${purchaseDate}`;
+  const watermarkText = name
+    ? `Licensed to: ${name} (${email}) — ${purchaseDate}`
+    : `Licensed to: ${email} — ${purchaseDate}`;
 
   for (const page of pages) {
     const { width } = page.getSize();
