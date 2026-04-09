@@ -3,7 +3,7 @@
  * Receives Stripe events. On successful payment, enqueues a watermark job.
  * Responds 200 immediately so Stripe doesn't retry.
  */
-export async function onRequestPost({ request, env, ctx }) {
+export async function onRequestPost({ request, env, waitUntil }) {
   const payload = await request.text();
   const signature = request.headers.get('stripe-signature');
 
@@ -26,7 +26,7 @@ export async function onRequestPost({ request, env, ctx }) {
         purchaseDate: new Date().toISOString().split('T')[0],
       };
       // Enqueue asynchronously — the response is already sent to Stripe
-      ctx.waitUntil(env.WATERMARK_QUEUE.send(job));
+      waitUntil(env.WATERMARK_QUEUE.send(job));
     }
   }
 
