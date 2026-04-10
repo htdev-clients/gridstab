@@ -1,5 +1,8 @@
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 
+const MAX_RETRIES = 3; // must match max_retries in wrangler.toml
+const GILLES_EMAIL = 'contact@gridstab.com';
+
 /**
  * Queue consumer for watermarking purchased PDFs.
  * Triggered by a message from the Pages webhook function after a successful Stripe payment.
@@ -10,12 +13,33 @@ import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 export default {
   async queue(batch, env) {
     for (const message of batch.messages) {
+      const { sessionId } = message.body;
+
+      // Idempotency: skip if this session was already delivered
+      const alreadyProcessed = await env.PROCESSED_SESSIONS.get(sessionId);
+      if (alreadyProcessed) {
+        console.log(`Session ${sessionId} already processed — skipping duplicate`);
+        message.ack();
+        continue;
+      }
+
       try {
         await processJob(message.body, env);
+        // Mark as delivered (TTL: 30 days)
+        await env.PROCESSED_SESSIONS.put(sessionId, '1', { expirationTtl: 2592000 });
         message.ack();
       } catch (err) {
-        console.error(`Watermark job failed for session ${message.body.sessionId}:`, err);
-        message.retry();
+        console.error(`Watermark job failed for session ${sessionId} (attempt ${message.attempts}):`, err);
+
+        if (message.attempts > MAX_RETRIES) {
+          // All retries exhausted — alert Gilles so he can deliver manually
+          await notifyDeliveryFailure(message.body, err, env).catch(e =>
+            console.error('Failed to send delivery failure alert:', e)
+          );
+          message.ack();
+        } else {
+          message.retry();
+        }
       }
     }
   },
@@ -30,8 +54,11 @@ async function processJob({ email, name, purchaseDate }, env) {
   // 2. Watermark all pages with the buyer's email and purchase date
   const watermarked = await watermarkPDF(pdfBytes, email, name, purchaseDate);
 
-  // 3. Send the watermarked PDF as an email attachment — then discard it
+  // 3. Send the watermarked PDF to the buyer
   await sendBookEmail({ email, name, pdfBytes: watermarked, env });
+
+  // 4. Notify Gilles of the sale
+  await notifySale({ email, name, env });
 }
 
 async function watermarkPDF(pdfBytes, email, name, purchaseDate) {
@@ -59,13 +86,36 @@ async function watermarkPDF(pdfBytes, email, name, purchaseDate) {
   return await pdfDoc.save();
 }
 
+// Chunked base64 encoding — avoids call stack overflow on large buffers
 function toBase64(arrayBuffer) {
   const bytes = new Uint8Array(arrayBuffer);
+  const chunkSize = 0x8000; // 32KB
   let binary = '';
-  for (let i = 0; i < bytes.length; i++) {
-    binary += String.fromCharCode(bytes[i]);
+  for (let i = 0; i < bytes.length; i += chunkSize) {
+    binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
   }
   return btoa(binary);
+}
+
+async function sendEmail({ to, subject, html, env }) {
+  const res = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${env.RESEND_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      from: env.RESEND_FROM_EMAIL,
+      to: [to],
+      subject,
+      html,
+    }),
+  });
+
+  if (!res.ok) {
+    const errText = await res.text();
+    throw new Error(`Resend API error ${res.status}: ${errText}`);
+  }
 }
 
 async function sendBookEmail({ email, name, pdfBytes, env }) {
@@ -125,4 +175,52 @@ async function sendBookEmail({ email, name, pdfBytes, env }) {
     const errText = await res.text();
     throw new Error(`Resend API error ${res.status}: ${errText}`);
   }
+}
+
+async function notifySale({ email, name, env }) {
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8"></head>
+<body style="font-family: sans-serif; max-width: 500px; margin: 0 auto; padding: 32px 20px; color: #1a1a1a;">
+  <p style="font-size: 16px; margin-bottom: 16px;">📚 New book sale</p>
+  <p style="font-size: 15px; color: #444;">
+    <strong>Buyer:</strong> ${name || '(no name)'}<br>
+    <strong>Email:</strong> ${email}
+  </p>
+  <p style="font-size: 13px; color: #888;">The watermarked PDF has been delivered automatically.</p>
+</body>
+</html>`;
+
+  await sendEmail({
+    to: GILLES_EMAIL,
+    subject: `New sale — ${name || email}`,
+    html,
+    env,
+  });
+}
+
+async function notifyDeliveryFailure({ sessionId, email, name }, err, env) {
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8"></head>
+<body style="font-family: sans-serif; max-width: 500px; margin: 0 auto; padding: 32px 20px; color: #1a1a1a;">
+  <p style="font-size: 16px; color: #cc0000; margin-bottom: 16px;">⚠️ Book delivery failed</p>
+  <p style="font-size: 15px; color: #444;">
+    <strong>Buyer:</strong> ${name || '(no name)'}<br>
+    <strong>Email:</strong> ${email}<br>
+    <strong>Session:</strong> ${sessionId}
+  </p>
+  <p style="font-size: 14px; color: #444;">
+    All ${MAX_RETRIES + 1} delivery attempts failed. Please send the book to the buyer manually.
+  </p>
+  <p style="font-size: 13px; color: #888; font-family: monospace;">${err?.message || 'Unknown error'}</p>
+</body>
+</html>`;
+
+  await sendEmail({
+    to: GILLES_EMAIL,
+    subject: `⚠️ Failed book delivery — ${name || email}`,
+    html,
+    env,
+  });
 }
