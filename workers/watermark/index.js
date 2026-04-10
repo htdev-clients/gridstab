@@ -28,13 +28,13 @@ async function processJob({ email, name, purchaseDate }, env) {
   const pdfBytes = await original.arrayBuffer();
 
   // 2. Watermark all pages with the buyer's email and purchase date
-  const watermarked = await watermarkPDF(pdfBytes, email, purchaseDate);
+  const watermarked = await watermarkPDF(pdfBytes, email, name, purchaseDate);
 
   // 3. Send the watermarked PDF as an email attachment — then discard it
   await sendBookEmail({ email, name, pdfBytes: watermarked, env });
 }
 
-async function watermarkPDF(pdfBytes, email, purchaseDate) {
+async function watermarkPDF(pdfBytes, email, name, purchaseDate) {
   const pdfDoc = await PDFDocument.load(pdfBytes);
   const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
   const pages = pdfDoc.getPages();
@@ -83,12 +83,7 @@ async function sendBookEmail({ email, name, pdfBytes, env }) {
 
   <p style="font-size: 16px; line-height: 1.7; margin-bottom: 24px;">
     Thank you for purchasing <strong>Grid Stability in the Era of Inverter-Dominated Power Systems</strong>.
-    Your personalised copy is attached to this email.
-  </p>
-
-  <p style="font-size: 16px; line-height: 1.7; margin-bottom: 24px;">
-    Please save it to your device or cloud storage — this is a one-time delivery and the attachment
-    will not be re-sent automatically. If you ever lose the file, reach out to Gilles directly.
+    Your personalised copy is attached to this email, please save it, this is a one-time delivery.
   </p>
 
   <p style="font-size: 14px; color: #666666; line-height: 1.7;">

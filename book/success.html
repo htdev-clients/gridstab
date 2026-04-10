@@ -1,23 +1,25 @@
 ---
 layout: page
 title: Purchase Successful
-description: "Your purchase was successful. Your personalised download link will arrive by email shortly."
+description: "Your purchase was successful. Your personalised copy will arrive by email shortly."
 ---
 
-<section class="py-20 bg-white min-h-[60vh] flex items-center">
-  <div class="container mx-auto px-6 max-w-sm text-center">
+<section class="py-16 sm:py-20 bg-white min-h-[60vh] flex items-center">
+  <div class="container mx-auto px-6 max-w-md text-center">
 
     <!-- Success icon -->
-    <div class="flex justify-center mb-8">
-      <div class="bg-green-50 rounded-full p-6">
-        <i data-lucide="check-circle" class="w-16 h-16 text-green-500"></i>
-      </div>
+    <div class="flex justify-center mb-6">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="200" height="200">
+        <circle cx="12" cy="12" r="10"/>
+        <polyline points="9 12 11 14 15 10"/>
+      </svg>
     </div>
 
-    <h1 class="text-3xl font-bold text-gridstab-dark mb-4">Payment Successful</h1>
+    <h1 class="text-3xl font-bold text-gridstab-dark mb-8">Payment Successful</h1>
 
-    <p class="text-gray-700 text-lg leading-relaxed mb-3">
-      Thank you for purchasing <strong>Grid Stability in the Era of Inverter-Dominated Power Systems</strong>.
+    <p class="text-gray-700 text-lg leading-relaxed mb-4">
+      Thank you for purchasing<br>
+      <strong>Grid Stability in the Era of Inverter-Dominated Power Systems</strong>.
     </p>
 
     <p class="text-gray-600 leading-relaxed mb-10">
@@ -26,9 +28,8 @@ description: "Your purchase was successful. Your personalised download link will
     </p>
 
     <!-- Help note -->
-    <div class="bg-gray-50 rounded-xl p-5 text-left mb-10">
-      <div class="flex items-start gap-3">
-        <i data-lucide="mail" class="w-5 h-5 text-gridstab-orange mt-0.5 shrink-0"></i>
+    <div class="bg-gray-50 rounded-xl p-6 sm:p-8 text-left">
+      <div>
         <p class="text-gray-500 text-sm leading-relaxed">
           Can't find the email? Check your spam folder.
           If you still haven't received it after 10 minutes, contact Gilles at
@@ -36,11 +37,6 @@ description: "Your purchase was successful. Your personalised download link will
         </p>
       </div>
     </div>
-
-    <a href="{{ '/' | relative_url }}" class="inline-flex items-center gap-2 text-gray-400 hover:text-gridstab-orange transition-colors text-sm">
-      <i data-lucide="arrow-left" class="w-4 h-4"></i>
-      Back to GridStab.com
-    </a>
 
   </div>
 </section>
