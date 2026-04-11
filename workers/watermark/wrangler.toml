@@ -5,7 +5,17 @@
 # SECRET KEYS must be set with: npx wrangler secret put RESEND_API_KEY
 # Required secrets:
 #   RESEND_API_KEY      — from Resend dashboard
-#   RESEND_FROM_EMAIL   — e.g. books@gridstab.com
+#
+# ─────────────────────────────────────────────────────────────────────────────
+# MANUAL RE-DELIVERY (use when Gilles forwards a delivery failure alert)
+# ─────────────────────────────────────────────────────────────────────────────
+# Run from this directory (workers/watermark/):
+#
+#   npx wrangler queues publish book-watermark-queue --message-body \
+#     '{"sessionId":"cs_xxx","email":"buyer@example.com","name":"Buyer Name","purchaseDate":"2026-04-10"}'
+#
+# Fill in the values from the failure alert email Gilles forwarded.
+# ─────────────────────────────────────────────────────────────────────────────
 
 name = "gridstab-watermark"
 main = "index.js"
