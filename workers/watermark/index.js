@@ -58,7 +58,7 @@ async function processJob({ email, name, purchaseDate }, env) {
   await sendBookEmail({ email, name, pdfBytes: watermarked, env });
 
   // 4. Notify Gilles of the sale
-  await notifySale({ email, name, env });
+  await notifySale({ sessionId, email, name, purchaseDate, env });
 }
 
 async function watermarkPDF(pdfBytes, email, name, purchaseDate) {
@@ -177,7 +177,7 @@ async function sendBookEmail({ email, name, pdfBytes, env }) {
   }
 }
 
-async function notifySale({ email, name, env }) {
+async function notifySale({ sessionId, email, name, purchaseDate, env }) {
   const html = `<!DOCTYPE html>
 <html lang="en">
 <head><meta charset="utf-8"></head>
@@ -185,7 +185,9 @@ async function notifySale({ email, name, env }) {
   <p style="font-size: 16px; margin-bottom: 16px;">📚 New book sale</p>
   <p style="font-size: 15px; color: #444;">
     <strong>Buyer:</strong> ${name || '(no name)'}<br>
-    <strong>Email:</strong> ${email}
+    <strong>Email:</strong> ${email}<br>
+    <strong>Date:</strong> ${purchaseDate}<br>
+    <strong>Stripe session:</strong> ${sessionId}
   </p>
   <p style="font-size: 13px; color: #888;">The watermarked PDF has been delivered automatically.</p>
 </body>
@@ -211,7 +213,11 @@ async function notifyDeliveryFailure({ sessionId, email, name }, err, env) {
     <strong>Session:</strong> ${sessionId}
   </p>
   <p style="font-size: 14px; color: #444;">
-    All ${MAX_RETRIES + 1} delivery attempts failed. Please send the book to the buyer manually.
+    All ${MAX_RETRIES + 1} delivery attempts failed. The buyer has not received their book.
+  </p>
+  <p style="font-size: 14px; color: #444;">
+    <strong>Action required:</strong> Contact the buyer at ${email} to let them know,
+    then forward this email to your developer to manually re-trigger delivery.
   </p>
   <p style="font-size: 13px; color: #888; font-family: monospace;">${err?.message || 'Unknown error'}</p>
 </body>
