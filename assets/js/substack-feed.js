@@ -1,3 +1,9 @@
+// Resolves when the feed has finished loading (success or failure),
+// so other scripts can await stable layout before computing scroll positions.
+window.__substackFeedReady = new Promise(resolve => {
+  window.__resolveSubstackFeed = resolve;
+});
+
 // Fetch and display Substack RSS feed
 async function loadSubstackFeed() {
   const section = document.querySelector('#substack[data-substack-url]');
@@ -35,8 +41,7 @@ async function loadSubstackFeed() {
       const excerpt = post.description
         .replace(/<[^>]*>/g, '')
         .replace(/\s+/g, ' ')
-        .trim()
-        .substring(0, 200) + '...';
+        .trim();
 
       // Get thumbnail image (use enclosure as fallback, but filter out profile pics)
       let thumbnail = post.thumbnail || '';
@@ -76,17 +81,13 @@ async function loadSubstackFeed() {
               </div>
 
               <!-- Image on the right (or blank space to keep layout consistent) -->
-              <div class="post-image-container md:w-80 flex-shrink-0">
+              <div class="post-image-container relative h-52 md:h-auto md:w-80 flex-shrink-0 overflow-hidden">
                 ${thumbnail ? `
                   <img src="${thumbnail}"
                        alt="${post.title}"
-                       class="w-full h-full md:h-full object-cover hover:opacity-95 transition-opacity"
-                       loading="lazy"
-                       style="min-height: 250px;">
-                ` : `
-                  <!-- Blank space to maintain layout consistency -->
-                  <div class="w-full h-full bg-white" style="min-height: 250px;"></div>
-                `}
+                       class="absolute inset-0 w-full h-full object-cover object-left-top hover:opacity-95 transition-opacity"
+                       loading="lazy">
+                ` : ``}
               </div>
             </div>
           </a>
@@ -98,6 +99,8 @@ async function loadSubstackFeed() {
     console.error('Error loading Substack feed:', error);
     loadingPlaceholder.classList.add('hidden');
     errorMessage.classList.remove('hidden');
+  } finally {
+    window.__resolveSubstackFeed();
   }
 }
 
