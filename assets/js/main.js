@@ -129,13 +129,14 @@ document.addEventListener('DOMContentLoaded', async () => {
           mobileMenu.classList.add('hidden');
         }
 
-        // Scroll to target
-        const headerHeight = header ? header.offsetHeight : 0;
-        const targetPosition = target.getBoundingClientRect().top + window.pageYOffset - headerHeight;
-
-        window.scrollTo({
-          top: targetPosition,
-          behavior: 'smooth'
+        // Wait for the Substack feed to finish inserting content before computing
+        // the scroll position — without this, sections below the feed land too high
+        // on first click because the feed hasn't expanded the layout yet.
+        const feedReady = window.__substackFeedReady || Promise.resolve();
+        feedReady.then(() => {
+          const headerHeight = header ? header.offsetHeight : 0;
+          const targetPosition = target.getBoundingClientRect().top + window.pageYOffset - headerHeight;
+          window.scrollTo({ top: targetPosition, behavior: 'smooth' });
         });
       }
     });
@@ -204,6 +205,22 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.querySelectorAll('.service-card').forEach(card => {
     observer.observe(card);
   });
+
+  // Re-scroll to hash after Substack feed loads
+  // When the page is opened with a hash (e.g. /#book), the browser scrolls
+  // natively before the feed loads, then the feed inserts tall content that
+  // pushes the target section down. Re-scrolling after the feed settles fixes this.
+  if (window.location.hash) {
+    const hashTarget = document.querySelector(window.location.hash);
+    if (hashTarget) {
+      const feedReady = window.__substackFeedReady || Promise.resolve();
+      feedReady.then(() => {
+        const headerHeight = header ? header.offsetHeight : 0;
+        const targetPosition = hashTarget.getBoundingClientRect().top + window.pageYOffset - headerHeight;
+        window.scrollTo({ top: targetPosition, behavior: 'smooth' });
+      });
+    }
+  }
 
   // Log initialization
   console.log('GridStab website initialized successfully');
