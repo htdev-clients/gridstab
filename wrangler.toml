@@ -17,9 +17,6 @@
 name = "gridstab"
 pages_build_output_dir = "_site"
 
-[vars]
-RESEND_FROM_EMAIL = "books@gridstab.com"
-
 [[r2_buckets]]
 binding = "BOOK_BUCKET"
 bucket_name = "gridstab-books"
