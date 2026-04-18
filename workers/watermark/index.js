@@ -45,7 +45,7 @@ export default {
   },
 };
 
-async function processJob({ email, name, purchaseDate }, env) {
+async function processJob({ sessionId, email, name, purchaseDate }, env) {
   // 1. Load original PDF from R2
   const original = await env.BOOK_BUCKET.get('book/original.pdf');
   if (!original) throw new Error('Original PDF not found at book/original.pdf in R2');
