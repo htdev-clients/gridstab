@@ -7,14 +7,48 @@
 #   RESEND_API_KEY      — from Resend dashboard
 #
 # ─────────────────────────────────────────────────────────────────────────────
-# MANUAL RE-DELIVERY (use when Gilles forwards a delivery failure alert)
+# MANUAL RE-DELIVERY
+# Use when a buyer did not receive the book (Gilles will forward the failure
+# alert email, or you can find the Stripe session ID in the Stripe dashboard).
 # ─────────────────────────────────────────────────────────────────────────────
-# Run from this directory (workers/watermark/):
 #
-#   npx wrangler queues publish book-watermark-queue --message-body \
-#     '{"sessionId":"cs_xxx","email":"buyer@example.com","name":"Buyer Name","purchaseDate":"2026-04-10"}'
+# STEP 1 — Get a Cloudflare API token (one-time setup, save it somewhere safe)
+#   dash.cloudflare.com → My Profile → API Tokens → Create Token
+#   Use the "Edit Cloudflare Workers" template, scope to gilchas-srl account.
 #
-# Fill in the values from the failure alert email Gilles forwarded.
+# STEP 2 — If this is a re-delivery (not a test), clear the idempotency key
+#   first so the worker doesn't skip it as already processed:
+#
+#   npx wrangler kv key delete --binding PROCESSED_SESSIONS "cs_live_xxx" \
+#     --config workers/watermark/wrangler.toml
+#
+#   (Skip this step for a fresh session ID that was never successfully delivered)
+#
+# STEP 3 — Enqueue the message (fill in values from the failure alert email):
+#
+#   curl -X POST \
+#     "https://api.cloudflare.com/client/v4/accounts/a0e3646157f2044a07fd04626eebc5c7/queues/5abf4c6ead064915a8af342f9f77255c/messages" \
+#     -H "Authorization: Bearer $CF_API_TOKEN_GRIDSTAB" \
+#     -H "Content-Type: application/json" \
+#     -d '{
+#       "body": {
+#         "sessionId": "cs_live_xxx",
+#         "email":     "buyer@example.com",
+#         "name":      "Buyer Name",
+#         "purchaseDate": "2026-04-10"
+#       }
+#     }'
+#
+# STEP 4 — Verify in the Cloudflare Workers logs (Workers & Pages →
+#   gridstab-watermark → Logs) that the job completed with outcome "ok".
+#   The buyer should receive the email within ~30 seconds.
+#
+# FOR TESTING (no real purchase needed):
+#   Use a made-up sessionId like "cs_test_manual_001" and your own email.
+#   Each test run needs a unique sessionId (the KV idempotency check will
+#   silently skip a session ID that was already successfully delivered).
+#
+# Note: `wrangler queues publish` does not exist — use curl as shown above.
 # ─────────────────────────────────────────────────────────────────────────────
 
 name = "gridstab-watermark"
