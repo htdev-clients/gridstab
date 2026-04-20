@@ -178,6 +178,10 @@ async function sendBookEmail({ email, name, pdfBytes, env }) {
 }
 
 async function notifySale({ sessionId, email, name, purchaseDate, env }) {
+  // Skip sale notification for manual test runs — only real Stripe live sessions
+  // should surface as "New book sale" in Gilles' inbox.
+  if (!sessionId.startsWith('cs_live_')) return;
+
   const html = `<!DOCTYPE html>
 <html lang="en">
 <head><meta charset="utf-8"></head>
