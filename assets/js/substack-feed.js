@@ -4,6 +4,22 @@ window.__substackFeedReady = new Promise(resolve => {
   window.__resolveSubstackFeed = resolve;
 });
 
+// Escape untrusted RSS fields before injecting into innerHTML.
+const escapeHtml = (s) => String(s ?? '')
+  .replace(/&/g, '&amp;')
+  .replace(/</g, '&lt;')
+  .replace(/>/g, '&gt;')
+  .replace(/"/g, '&quot;')
+  .replace(/'/g, '&#39;');
+
+// Only allow http(s) URLs — blocks javascript: / data: in href/src.
+const safeUrl = (u) => {
+  try {
+    const p = new URL(u).protocol;
+    return (p === 'http:' || p === 'https:') ? u : '';
+  } catch { return ''; }
+};
+
 // Fetch and display Substack RSS feed
 async function loadSubstackFeed() {
   const section = document.querySelector('#substack[data-substack-url]');
@@ -55,9 +71,14 @@ async function loadSubstackFeed() {
         }
       }
 
+      const safeLink = escapeHtml(safeUrl(post.link));
+      const safeTitle = escapeHtml(post.title);
+      const safeExcerpt = escapeHtml(excerpt);
+      const safeThumb = escapeHtml(safeUrl(thumbnail));
+
       return `
         <article class="substack-post bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300">
-          <a href="${post.link}" target="_blank" rel="noopener noreferrer" class="block">
+          <a href="${safeLink}" target="_blank" rel="noopener noreferrer" class="block">
             <div class="flex flex-col md:flex-row">
               <!-- Content on the left -->
               <div class="p-8 flex-1">
@@ -67,10 +88,10 @@ async function loadSubstackFeed() {
                   <span class="text-sm text-gray-500">Dr. Gilles Chaspierre</span>
                 </div>
                 <h3 class="text-2xl font-bold mb-3 text-gray-900 hover:text-primary transition-colors leading-tight">
-                  ${post.title}
+                  ${safeTitle}
                 </h3>
                 <p class="text-gray-600 mb-4 leading-relaxed">
-                  ${excerpt}
+                  ${safeExcerpt}
                 </p>
                 <div class="flex items-center text-primary font-semibold hover:underline">
                   Read full article
@@ -82,9 +103,9 @@ async function loadSubstackFeed() {
 
               <!-- Image on the right (or blank space to keep layout consistent) -->
               <div class="post-image-container relative h-52 md:h-auto md:w-80 flex-shrink-0 overflow-hidden">
-                ${thumbnail ? `
-                  <img src="${thumbnail}"
-                       alt="${post.title}"
+                ${safeThumb ? `
+                  <img src="${safeThumb}"
+                       alt="${safeTitle}"
                        class="absolute inset-0 w-full h-full object-cover object-left-top hover:opacity-95 transition-opacity"
                        loading="lazy">
                 ` : ``}

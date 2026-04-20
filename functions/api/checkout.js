@@ -12,7 +12,7 @@ export async function onRequestGet({ request, env }) {
     'line_items[0][quantity]': '1',
     'billing_address_collection': 'required',
     'automatic_tax[enabled]': 'true',
-    success_url: `${origin}/book/success?session_id={CHECKOUT_SESSION_ID}`,
+    success_url: `${origin}/book/success/?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${origin}/#book`,
   });
 

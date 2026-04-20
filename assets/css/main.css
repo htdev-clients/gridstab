@@ -256,7 +256,7 @@ section[id] {
   color: #FF6719;
 }
 
-/* Subscriptions: constrain single-column cards, expand for 3-col grid at lg */
+/* Subscriptions: constrain single-column cards, expand for 2-col grid at lg */
 .subscriptions-wrapper {
   max-width: 42rem;
   margin-left: auto;

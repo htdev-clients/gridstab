@@ -22,9 +22,7 @@ exclude:
   - vendor
   - README.md
   - CLAUDE.md
-  - BOOK_PURCHASE_PLAN.md
   - .gitignore
-  - description.md
   - package.json
   - package-lock.json
   - tailwind.config.js

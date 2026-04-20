@@ -4,22 +4,17 @@
 # Dashboard → Settings → Environment variables
 # Add separate values for "Preview" (Stripe test keys) and "Production" (live).
 #
-# Required variables:
+# Required variables (used by functions/api/*):
 #   STRIPE_SECRET_KEY       — sk_test_... (preview) / sk_live_... (production)
 #   STRIPE_WEBHOOK_SECRET   — whsec_... (get from Stripe dashboard webhook config)
 #   STRIPE_PRICE_ID         — price_... (create product+price in Stripe dashboard)
-#   RESEND_API_KEY          — re_... (from Resend dashboard)
-#   RESEND_FROM_EMAIL       — e.g. books@gridstab.com (verified domain in Resend)
-# ─────────────────────────────────────────────────────────────────────────────
 #
+# Resend / R2 secrets belong on the watermark Worker, not Pages — see
+# workers/watermark/wrangler.toml.
 # ─────────────────────────────────────────────────────────────────────────────
 
 name = "gridstab"
 pages_build_output_dir = "_site"
-
-[[r2_buckets]]
-binding = "BOOK_BUCKET"
-bucket_name = "gridstab-books"
 
 [[queues.producers]]
 queue = "book-watermark-queue"
