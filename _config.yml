@@ -14,6 +14,10 @@ plugins:
   - jekyll-seo-tag
   - jekyll-sitemap
 
+# Include dot-directories Jekyll would otherwise skip
+include:
+  - .well-known
+
 # Exclude from processing
 exclude:
   - Gemfile
