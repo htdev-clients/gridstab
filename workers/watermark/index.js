@@ -121,6 +121,7 @@ async function sendEmail({ to, subject, html, env }) {
 async function sendBookEmail({ email, name, pdfBytes, env }) {
   const firstName = name ? name.split(' ')[0] : 'there';
   const base64Pdf = toBase64(pdfBytes);
+  const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
   const html = `<!DOCTYPE html>
 <html lang="en">
@@ -135,6 +136,24 @@ async function sendBookEmail({ email, name, pdfBytes, env }) {
     Thank you for purchasing <strong>Grid Stability in the Era of Inverter-Dominated Power Systems</strong>.
     Your personalised copy is attached to this email, please save it, this is a one-time delivery.
   </p>
+
+  <div style="margin: 32px 0; padding: 24px; background: #f8f8f8; border-left: 4px solid #FF6719;">
+    <h3 style="font-family: Arial, sans-serif; font-size: 14px; font-weight: bold; color: #1a1a1a; margin: 0 0 16px 0;">Order Confirmation</h3>
+    <table style="width: 100%; border-collapse: collapse; font-size: 14px; font-family: Arial, sans-serif;">
+      <tr style="border-bottom: 1px solid #e5e5e5;">
+        <td style="padding: 8px 0; color: #666666;">Email:</td>
+        <td style="padding: 8px 0; text-align: right; color: #1a1a1a;">${email}</td>
+      </tr>
+      <tr style="border-bottom: 1px solid #e5e5e5;">
+        <td style="padding: 8px 0; color: #666666;">Product:</td>
+        <td style="padding: 8px 0; text-align: right; color: #1a1a1a;">Grid Stability eBook</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px 0; color: #666666;">Date:</td>
+        <td style="padding: 8px 0; text-align: right; color: #1a1a1a;">${today}</td>
+      </tr>
+    </table>
+  </div>
 
   <p style="font-size: 14px; color: #666666; line-height: 1.7;">
     Questions or feedback? Feel free to write to
