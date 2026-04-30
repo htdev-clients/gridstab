@@ -46,18 +46,34 @@ export default {
 };
 
 async function processJob({ sessionId, email, name, purchaseDate }, env) {
-  // 1. Load original PDF from R2
+  // 1. Fetch Stripe session details for receipt info
+  const sessionDetails = await fetchStripeSession(sessionId, env.STRIPE_SECRET_KEY);
+  const amountTotal = sessionDetails.amount_total; // in cents
+  const currency = sessionDetails.currency;
+  const paymentIntentId = sessionDetails.payment_intent;
+
+  // Fetch payment intent to get payment method details
+  let cardLast4 = '';
+  if (paymentIntentId) {
+    const paymentIntent = await fetchStripePaymentIntent(paymentIntentId, env.STRIPE_SECRET_KEY);
+    if (paymentIntent.charges?.data?.[0]) {
+      const charge = paymentIntent.charges.data[0];
+      cardLast4 = charge.payment_method_details?.card?.last4 || '';
+    }
+  }
+
+  // 2. Load original PDF from R2
   const original = await env.BOOK_BUCKET.get('book/original.pdf');
   if (!original) throw new Error('Original PDF not found at book/original.pdf in R2');
   const pdfBytes = await original.arrayBuffer();
 
-  // 2. Watermark all pages with the buyer's email and purchase date
+  // 3. Watermark all pages with the buyer's email and purchase date
   const watermarked = await watermarkPDF(pdfBytes, email, name, purchaseDate);
 
-  // 3. Send the watermarked PDF to the buyer
-  await sendBookEmail({ email, name, pdfBytes: watermarked, env });
+  // 4. Send the watermarked PDF to the buyer
+  await sendBookEmail({ email, name, pdfBytes: watermarked, amountTotal, cardLast4, currency, env });
 
-  // 4. Notify Gilles of the sale
+  // 5. Notify Gilles of the sale
   await notifySale({ sessionId, email, name, purchaseDate, env });
 }
 
@@ -84,6 +100,22 @@ async function watermarkPDF(pdfBytes, email, name, purchaseDate) {
   }
 
   return await pdfDoc.save();
+}
+
+async function fetchStripeSession(sessionId, secretKey) {
+  const res = await fetch(`https://api.stripe.com/v1/checkout/sessions/${sessionId}`, {
+    headers: { 'Authorization': `Bearer ${secretKey}` },
+  });
+  if (!res.ok) throw new Error(`Failed to fetch Stripe session: ${res.statusText}`);
+  return await res.json();
+}
+
+async function fetchStripePaymentIntent(intentId, secretKey) {
+  const res = await fetch(`https://api.stripe.com/v1/payment_intents/${intentId}?expand=charges`, {
+    headers: { 'Authorization': `Bearer ${secretKey}` },
+  });
+  if (!res.ok) throw new Error(`Failed to fetch Stripe payment intent: ${res.statusText}`);
+  return await res.json();
 }
 
 // Chunked base64 encoding — avoids call stack overflow on large buffers
@@ -118,10 +150,11 @@ async function sendEmail({ to, subject, html, env }) {
   }
 }
 
-async function sendBookEmail({ email, name, pdfBytes, env }) {
+async function sendBookEmail({ email, name, pdfBytes, amountTotal, cardLast4, currency, env }) {
   const firstName = name ? name.split(' ')[0] : 'there';
   const base64Pdf = toBase64(pdfBytes);
   const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  const price = (amountTotal / 100).toLocaleString('en-US', { style: 'currency', currency: currency?.toUpperCase() || 'EUR' });
 
   const html = `<!DOCTYPE html>
 <html lang="en">
@@ -147,6 +180,14 @@ async function sendBookEmail({ email, name, pdfBytes, env }) {
       <tr style="border-bottom: 1px solid #e5e5e5;">
         <td style="padding: 8px 0; color: #666666;">Product:</td>
         <td style="padding: 8px 0; text-align: right; color: #1a1a1a;">Grid Stability eBook</td>
+      </tr>
+      <tr style="border-bottom: 1px solid #e5e5e5;">
+        <td style="padding: 8px 0; color: #666666;">Amount:</td>
+        <td style="padding: 8px 0; text-align: right; color: #1a1a1a;">${price}</td>
+      </tr>
+      <tr style="border-bottom: 1px solid #e5e5e5;">
+        <td style="padding: 8px 0; color: #666666;">Payment method:</td>
+        <td style="padding: 8px 0; text-align: right; color: #1a1a1a;">Card ending in ${cardLast4 || '••••'}</td>
       </tr>
       <tr>
         <td style="padding: 8px 0; color: #666666;">Date:</td>
