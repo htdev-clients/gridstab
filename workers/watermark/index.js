@@ -51,6 +51,7 @@ async function processJob({ sessionId, email, name, purchaseDate }, env) {
   const amountTotal = sessionDetails.amount_total; // in cents
   const currency = sessionDetails.currency;
   const cardLast4 = sessionDetails.payment_intent?.payment_method?.card?.last4 || '';
+  const purchaseTimestamp = sessionDetails.created * 1000; // Stripe uses Unix seconds
 
   // 2. Load original PDF from R2
   const original = await env.BOOK_BUCKET.get('book/original.pdf');
@@ -61,7 +62,7 @@ async function processJob({ sessionId, email, name, purchaseDate }, env) {
   const watermarked = await watermarkPDF(pdfBytes, email, name, purchaseDate);
 
   // 4. Send the watermarked PDF to the buyer
-  await sendBookEmail({ email, name, pdfBytes: watermarked, amountTotal, cardLast4, currency, env });
+  await sendBookEmail({ email, name, pdfBytes: watermarked, amountTotal, cardLast4, currency, purchaseTimestamp, env });
 
   // 5. Notify Gilles of the sale
   await notifySale({ sessionId, email, name, purchaseDate, env });
@@ -134,10 +135,18 @@ async function sendEmail({ to, subject, html, env }) {
   }
 }
 
-async function sendBookEmail({ email, name, pdfBytes, amountTotal, cardLast4, currency, env }) {
+async function sendBookEmail({ email, name, pdfBytes, amountTotal, cardLast4, currency, purchaseTimestamp, env }) {
   const firstName = name ? name.split(' ')[0] : 'there';
   const base64Pdf = toBase64(pdfBytes);
-  const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  const purchaseDateTime = new Date(purchaseTimestamp).toLocaleString('en-GB', {
+    timeZone: 'UTC',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  }) + ' UTC';
   const price = (amountTotal / 100).toLocaleString('en-US', { style: 'currency', currency: currency?.toUpperCase() || 'EUR' });
 
   const html = `<!DOCTYPE html>
@@ -175,7 +184,7 @@ async function sendBookEmail({ email, name, pdfBytes, amountTotal, cardLast4, cu
       </tr>
       <tr>
         <td style="padding: 8px 0; color: #666666;">Date:</td>
-        <td style="padding: 8px 0; text-align: right; color: #1a1a1a;">${today}</td>
+        <td style="padding: 8px 0; text-align: right; color: #1a1a1a;">${purchaseDateTime}</td>
       </tr>
     </table>
   </div>
