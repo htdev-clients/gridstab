@@ -206,6 +206,7 @@ async function notifySale({ sessionId, email, name, purchaseDate, env }) {
 }
 
 async function notifyDeliveryFailure({ sessionId, email, name }, err, env) {
+  if (!sessionId.startsWith('cs_live_')) return;
   const html = `<!DOCTYPE html>
 <html lang="en">
 <head><meta charset="utf-8"></head>
