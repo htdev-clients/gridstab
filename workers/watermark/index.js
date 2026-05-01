@@ -46,26 +46,11 @@ export default {
 };
 
 async function processJob({ sessionId, email, name, purchaseDate }, env) {
-  // 1. Fetch Stripe session details for receipt info
+  // 1. Fetch Stripe session with expanded payment method (single API call)
   const sessionDetails = await fetchStripeSession(sessionId, env.STRIPE_SECRET_KEY);
   const amountTotal = sessionDetails.amount_total; // in cents
   const currency = sessionDetails.currency;
-  const paymentIntentId = sessionDetails.payment_intent;
-
-  // Try to fetch payment intent for card details, but don't fail if it doesn't work
-  let cardLast4 = '';
-  if (paymentIntentId) {
-    try {
-      const paymentIntent = await fetchStripePaymentIntent(paymentIntentId, env.STRIPE_SECRET_KEY);
-      if (paymentIntent.charges?.data?.[0]) {
-        const charge = paymentIntent.charges.data[0];
-        cardLast4 = charge.payment_method_details?.card?.last4 || '';
-      }
-    } catch (err) {
-      console.warn(`Could not fetch payment method for intent ${paymentIntentId}:`, err);
-      // Continue without card details — still have amount for receipt
-    }
-  }
+  const cardLast4 = sessionDetails.payment_intent?.payment_method?.card?.last4 || '';
 
   // 2. Load original PDF from R2
   const original = await env.BOOK_BUCKET.get('book/original.pdf');
@@ -108,20 +93,12 @@ async function watermarkPDF(pdfBytes, email, name, purchaseDate) {
 }
 
 async function fetchStripeSession(sessionId, secretKey) {
-  const res = await fetch(`https://api.stripe.com/v1/checkout/sessions/${sessionId}`, {
-    headers: { 'Authorization': `Bearer ${secretKey}` },
-  });
-  if (!res.ok) throw new Error(`Failed to fetch Stripe session: ${res.statusText}`);
-  return await res.json();
-}
-
-async function fetchStripePaymentIntent(intentId, secretKey) {
-  const url = new URL(`https://api.stripe.com/v1/payment_intents/${intentId}`);
-  url.searchParams.append('expand[]', 'charges');
+  const url = new URL(`https://api.stripe.com/v1/checkout/sessions/${sessionId}`);
+  url.searchParams.append('expand[]', 'payment_intent.payment_method');
   const res = await fetch(url.toString(), {
     headers: { 'Authorization': `Bearer ${secretKey}` },
   });
-  if (!res.ok) throw new Error(`Failed to fetch Stripe payment intent: ${res.statusText}`);
+  if (!res.ok) throw new Error(`Failed to fetch Stripe session: ${res.statusText}`);
   return await res.json();
 }
 
