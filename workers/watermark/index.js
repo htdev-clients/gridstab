@@ -52,13 +52,18 @@ async function processJob({ sessionId, email, name, purchaseDate }, env) {
   const currency = sessionDetails.currency;
   const paymentIntentId = sessionDetails.payment_intent;
 
-  // Fetch payment intent to get payment method details
+  // Try to fetch payment intent for card details, but don't fail if it doesn't work
   let cardLast4 = '';
   if (paymentIntentId) {
-    const paymentIntent = await fetchStripePaymentIntent(paymentIntentId, env.STRIPE_SECRET_KEY);
-    if (paymentIntent.charges?.data?.[0]) {
-      const charge = paymentIntent.charges.data[0];
-      cardLast4 = charge.payment_method_details?.card?.last4 || '';
+    try {
+      const paymentIntent = await fetchStripePaymentIntent(paymentIntentId, env.STRIPE_SECRET_KEY);
+      if (paymentIntent.charges?.data?.[0]) {
+        const charge = paymentIntent.charges.data[0];
+        cardLast4 = charge.payment_method_details?.card?.last4 || '';
+      }
+    } catch (err) {
+      console.warn(`Could not fetch payment method for intent ${paymentIntentId}:`, err);
+      // Continue without card details — still have amount for receipt
     }
   }
 
@@ -111,7 +116,9 @@ async function fetchStripeSession(sessionId, secretKey) {
 }
 
 async function fetchStripePaymentIntent(intentId, secretKey) {
-  const res = await fetch(`https://api.stripe.com/v1/payment_intents/${intentId}?expand=charges`, {
+  const url = new URL(`https://api.stripe.com/v1/payment_intents/${intentId}`);
+  url.searchParams.append('expand[]', 'charges');
+  const res = await fetch(url.toString(), {
     headers: { 'Authorization': `Bearer ${secretKey}` },
   });
   if (!res.ok) throw new Error(`Failed to fetch Stripe payment intent: ${res.statusText}`);
