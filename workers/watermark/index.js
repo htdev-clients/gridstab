@@ -46,18 +46,25 @@ export default {
 };
 
 async function processJob({ sessionId, email, name, purchaseDate }, env) {
-  // 1. Load original PDF from R2
+  // 1. Fetch Stripe session with expanded payment method (single API call)
+  const sessionDetails = await fetchStripeSession(sessionId, env.STRIPE_SECRET_KEY);
+  const amountTotal = sessionDetails.amount_total; // in cents
+  const currency = sessionDetails.currency;
+  const cardLast4 = sessionDetails.payment_intent?.payment_method?.card?.last4 || '';
+  const purchaseTimestamp = sessionDetails.created * 1000; // Stripe uses Unix seconds
+
+  // 2. Load original PDF from R2
   const original = await env.BOOK_BUCKET.get('book/original.pdf');
   if (!original) throw new Error('Original PDF not found at book/original.pdf in R2');
   const pdfBytes = await original.arrayBuffer();
 
-  // 2. Watermark all pages with the buyer's email and purchase date
+  // 3. Watermark all pages with the buyer's email and purchase date
   const watermarked = await watermarkPDF(pdfBytes, email, name, purchaseDate);
 
-  // 3. Send the watermarked PDF to the buyer
-  await sendBookEmail({ email, name, pdfBytes: watermarked, env });
+  // 4. Send the watermarked PDF to the buyer
+  await sendBookEmail({ email, name, pdfBytes: watermarked, amountTotal, cardLast4, currency, purchaseTimestamp, env });
 
-  // 4. Notify Gilles of the sale
+  // 5. Notify Gilles of the sale
   await notifySale({ sessionId, email, name, purchaseDate, env });
 }
 
@@ -84,6 +91,16 @@ async function watermarkPDF(pdfBytes, email, name, purchaseDate) {
   }
 
   return await pdfDoc.save();
+}
+
+async function fetchStripeSession(sessionId, secretKey) {
+  const url = new URL(`https://api.stripe.com/v1/checkout/sessions/${sessionId}`);
+  url.searchParams.append('expand[]', 'payment_intent.payment_method');
+  const res = await fetch(url.toString(), {
+    headers: { 'Authorization': `Bearer ${secretKey}` },
+  });
+  if (!res.ok) throw new Error(`Failed to fetch Stripe session: ${res.statusText}`);
+  return await res.json();
 }
 
 // Chunked base64 encoding — avoids call stack overflow on large buffers
@@ -118,9 +135,19 @@ async function sendEmail({ to, subject, html, env }) {
   }
 }
 
-async function sendBookEmail({ email, name, pdfBytes, env }) {
+async function sendBookEmail({ email, name, pdfBytes, amountTotal, cardLast4, currency, purchaseTimestamp, env }) {
   const firstName = name ? name.split(' ')[0] : 'there';
   const base64Pdf = toBase64(pdfBytes);
+  const purchaseDateTime = new Date(purchaseTimestamp).toLocaleString('en-GB', {
+    timeZone: 'UTC',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  }) + ' UTC';
+  const price = (amountTotal / 100).toLocaleString('en-US', { style: 'currency', currency: currency?.toUpperCase() || 'EUR' });
 
   const html = `<!DOCTYPE html>
 <html lang="en">
@@ -135,6 +162,32 @@ async function sendBookEmail({ email, name, pdfBytes, env }) {
     Thank you for purchasing <strong>Grid Stability in the Era of Inverter-Dominated Power Systems</strong>.
     Your personalised copy is attached to this email, please save it, this is a one-time delivery.
   </p>
+
+  <div style="margin: 32px 0; padding: 24px; background: #f8f8f8; border-left: 4px solid #FF6719;">
+    <h3 style="font-family: Arial, sans-serif; font-size: 14px; font-weight: bold; color: #1a1a1a; margin: 0 0 16px 0;">Order Confirmation</h3>
+    <table style="width: 100%; border-collapse: collapse; font-size: 14px; font-family: Arial, sans-serif;">
+      <tr style="border-bottom: 1px solid #e5e5e5;">
+        <td style="padding: 8px 0; color: #666666;">Email:</td>
+        <td style="padding: 8px 0; text-align: right; color: #1a1a1a;">${email}</td>
+      </tr>
+      <tr style="border-bottom: 1px solid #e5e5e5;">
+        <td style="padding: 8px 0; color: #666666;">Product:</td>
+        <td style="padding: 8px 0; text-align: right; color: #1a1a1a;">Grid Stability eBook</td>
+      </tr>
+      <tr style="border-bottom: 1px solid #e5e5e5;">
+        <td style="padding: 8px 0; color: #666666;">Amount:</td>
+        <td style="padding: 8px 0; text-align: right; color: #1a1a1a;">${price}</td>
+      </tr>
+      <tr style="border-bottom: 1px solid #e5e5e5;">
+        <td style="padding: 8px 0; color: #666666;">Payment method:</td>
+        <td style="padding: 8px 0; text-align: right; color: #1a1a1a;">Card ending in ${cardLast4 || '••••'}</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px 0; color: #666666;">Date:</td>
+        <td style="padding: 8px 0; text-align: right; color: #1a1a1a;">${purchaseDateTime}</td>
+      </tr>
+    </table>
+  </div>
 
   <p style="font-size: 14px; color: #666666; line-height: 1.7;">
     Questions or feedback? Feel free to write to
