@@ -8,8 +8,12 @@
 #   STRIPE_SECRET_KEY       — sk_test_... (preview) / sk_live_... (production)
 #   STRIPE_WEBHOOK_SECRET   — whsec_... (get from Stripe dashboard webhook config)
 #   STRIPE_PRICE_ID         — price_... (create product+price in Stripe dashboard)
+#   DOWNLOAD_LINK_SECRET    — random 32+ byte hex string; MUST match the value set
+#                             on the watermark Worker (used to sign/verify book
+#                             download URLs). Generate with:
+#                               openssl rand -hex 32
 #
-# Resend / R2 secrets belong on the watermark Worker, not Pages — see
+# Resend secrets belong on the watermark Worker, not Pages — see
 # workers/watermark/wrangler.toml.
 # ─────────────────────────────────────────────────────────────────────────────
 
@@ -19,3 +23,9 @@ pages_build_output_dir = "_site"
 [[queues.producers]]
 queue = "book-watermark-queue"
 binding = "WATERMARK_QUEUE"
+
+# R2 bucket — read-only access from functions/api/book/download.js to stream
+# watermarked PDFs to buyers via signed link.
+[[r2_buckets]]
+binding = "BOOK_BUCKET"
+bucket_name = "gridstab-books"

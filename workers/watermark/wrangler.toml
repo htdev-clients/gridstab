@@ -2,9 +2,13 @@
 # Deploy with: cd workers/watermark && npm install && npx wrangler deploy
 # This Worker is separate from the Pages Functions but shares the same R2/KV resources.
 #
-# SECRET KEYS must be set with: npx wrangler secret put RESEND_API_KEY
+# SECRET KEYS must be set with: npx wrangler secret put <NAME>
 # Required secrets:
-#   RESEND_API_KEY      — from Resend dashboard
+#   RESEND_API_KEY        — from Resend dashboard
+#   STRIPE_SECRET_KEY     — sk_live_... (used to fetch session details for the receipt)
+#   DOWNLOAD_LINK_SECRET  — random 32+ byte hex string; MUST match the value set
+#                           on Cloudflare Pages (used to sign book download URLs).
+#                           Generate with: openssl rand -hex 32
 #
 # ─────────────────────────────────────────────────────────────────────────────
 # MANUAL RE-DELIVERY
@@ -65,12 +69,17 @@ enabled = true
 # Queue consumer — receives jobs enqueued by the Pages webhook function
 [vars]
 RESEND_FROM_EMAIL = "books@gridstab.com"
+SITE_URL = "https://gridstab.com"
 
 [[queues.consumers]]
 queue = "book-watermark-queue"
 max_batch_size = 1
 max_batch_timeout = 30
 max_retries = 3
+
+# Cron-triggered cleanup of expired delivery PDFs from R2 (runs once daily at 03:00 UTC)
+[triggers]
+crons = ["0 3 * * *"]
 
 # R2 Bucket — same bucket as Pages Functions
 [[r2_buckets]]

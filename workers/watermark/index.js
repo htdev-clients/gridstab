@@ -2,13 +2,19 @@ import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 
 const MAX_RETRIES = 3; // must match max_retries in wrangler.toml
 const GILLES_EMAIL = 'contact@gridstab.com';
+const LINK_VALIDITY_DAYS = 30;
+// Cleanup deletes objects strictly older than this; one extra day gives a buffer
+// past link expiry so a buyer clicking the link on day 30 still resolves.
+const CLEANUP_AGE_DAYS = LINK_VALIDITY_DAYS + 1;
 
 /**
  * Queue consumer for watermarking purchased PDFs.
  * Triggered by a message from the Pages webhook function after a successful Stripe payment.
  *
  * Each job contains: { sessionId, email, name, purchaseDate }
- * On completion: watermarked PDF sent as email attachment, then discarded — not stored anywhere.
+ * On completion: watermarked PDF uploaded to R2 at delivered/{sessionId}.pdf,
+ * a signed 30-day download link is emailed to the buyer, and the file is
+ * removed by the scheduled cleanup once expired.
  */
 export default {
   async queue(batch, env) {
@@ -43,6 +49,11 @@ export default {
       }
     }
   },
+
+  // Cron-triggered cleanup of expired delivery PDFs (see wrangler.toml triggers).
+  async scheduled(_event, env, ctx) {
+    ctx.waitUntil(cleanupExpiredDeliveries(env));
+  },
 };
 
 async function processJob({ sessionId, email, name, purchaseDate }, env) {
@@ -61,10 +72,20 @@ async function processJob({ sessionId, email, name, purchaseDate }, env) {
   // 3. Watermark all pages with the buyer's email and purchase date
   const watermarked = await watermarkPDF(pdfBytes, email, name, purchaseDate);
 
-  // 4. Send the watermarked PDF to the buyer
-  await sendBookEmail({ email, name, pdfBytes: watermarked, amountTotal, cardLast4, currency, purchaseTimestamp, env });
+  // 4. Upload watermarked PDF to R2 (overwrites on retry — safe)
+  await env.BOOK_BUCKET.put(`delivered/${sessionId}.pdf`, watermarked, {
+    httpMetadata: { contentType: 'application/pdf' },
+  });
 
-  // 5. Notify Gilles of the sale
+  // 5. Build a signed, time-limited download URL (30 days)
+  const expirySec = Math.floor(Date.now() / 1000) + LINK_VALIDITY_DAYS * 86400;
+  const sig = await signDownloadToken(sessionId, expirySec, env.DOWNLOAD_LINK_SECRET);
+  const downloadUrl = `${env.SITE_URL}/api/book/download?s=${encodeURIComponent(sessionId)}&exp=${expirySec}&sig=${sig}`;
+
+  // 6. Send the download link to the buyer
+  await sendBookEmail({ email, name, downloadUrl, expirySec, amountTotal, cardLast4, currency, purchaseTimestamp, env });
+
+  // 7. Notify Gilles of the sale
   await notifySale({ sessionId, email, name, purchaseDate, env });
 }
 
@@ -103,17 +124,6 @@ async function fetchStripeSession(sessionId, secretKey) {
   return await res.json();
 }
 
-// Chunked base64 encoding — avoids call stack overflow on large buffers
-function toBase64(arrayBuffer) {
-  const bytes = new Uint8Array(arrayBuffer);
-  const chunkSize = 0x8000; // 32KB
-  let binary = '';
-  for (let i = 0; i < bytes.length; i += chunkSize) {
-    binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
-  }
-  return btoa(binary);
-}
-
 async function sendEmail({ to, subject, html, env }) {
   const res = await fetch('https://api.resend.com/emails', {
     method: 'POST',
@@ -135,9 +145,8 @@ async function sendEmail({ to, subject, html, env }) {
   }
 }
 
-async function sendBookEmail({ email, name, pdfBytes, amountTotal, cardLast4, currency, purchaseTimestamp, env }) {
+async function sendBookEmail({ email, name, downloadUrl, expirySec, amountTotal, cardLast4, currency, purchaseTimestamp, env }) {
   const firstName = name ? name.split(' ')[0] : 'there';
-  const base64Pdf = toBase64(pdfBytes);
   const purchaseDateTime = new Date(purchaseTimestamp).toLocaleString('en-GB', {
     timeZone: 'UTC',
     year: 'numeric',
@@ -147,6 +156,12 @@ async function sendBookEmail({ email, name, pdfBytes, amountTotal, cardLast4, cu
     minute: '2-digit',
     hour12: false,
   }) + ' UTC';
+  const expiryDate = new Date(expirySec * 1000).toLocaleString('en-GB', {
+    timeZone: 'UTC',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
   const price = (amountTotal / 100).toLocaleString('en-US', { style: 'currency', currency: currency?.toUpperCase() || 'EUR' });
 
   const html = `<!DOCTYPE html>
@@ -160,8 +175,18 @@ async function sendBookEmail({ email, name, pdfBytes, amountTotal, cardLast4, cu
 
   <p style="font-size: 16px; line-height: 1.7; margin-bottom: 24px;">
     Thank you for purchasing <strong>Grid Stability in the Era of Inverter-Dominated Power Systems</strong>.
-    Your personalised copy is attached to this email, please save it, this is a one-time delivery.
+    Your personalised copy is ready to download using the button below.
   </p>
+
+  <div style="text-align: center; margin: 32px 0;">
+    <a href="${downloadUrl}"
+       style="display: inline-block; background: #FF6719; color: #ffffff !important; padding: 16px 36px; font-family: Arial, sans-serif; font-size: 16px; font-weight: bold; text-decoration: none; border-radius: 4px;">
+      Download your book
+    </a>
+    <p style="font-family: Arial, sans-serif; font-size: 13px; color: #666666; margin: 16px 0 0 0;">
+      This link is valid for 30 days, until ${expiryDate}. Please save the PDF locally once downloaded.
+    </p>
+  </div>
 
   <div style="margin: 32px 0; padding: 24px; background: #f8f8f8; border-left: 4px solid #FF6719;">
     <h3 style="font-family: Arial, sans-serif; font-size: 14px; font-weight: bold; color: #1a1a1a; margin: 0 0 16px 0;">Order Confirmation</h3>
@@ -204,30 +229,12 @@ async function sendBookEmail({ email, name, pdfBytes, amountTotal, cardLast4, cu
 </body>
 </html>`;
 
-  const res = await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${env.RESEND_API_KEY}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      from: env.RESEND_FROM_EMAIL,
-      to: [email],
-      subject: 'Your book — Grid Stability in the Era of Inverter-Dominated Power Systems',
-      html,
-      attachments: [
-        {
-          filename: 'Grid-Stability-Gilles-Chaspierre.pdf',
-          content: base64Pdf,
-        },
-      ],
-    }),
+  await sendEmail({
+    to: email,
+    subject: 'Your book — Grid Stability in the Era of Inverter-Dominated Power Systems',
+    html,
+    env,
   });
-
-  if (!res.ok) {
-    const errText = await res.text();
-    throw new Error(`Resend API error ${res.status}: ${errText}`);
-  }
 }
 
 async function notifySale({ sessionId, email, name, purchaseDate, env }) {
@@ -287,4 +294,39 @@ async function notifyDeliveryFailure({ sessionId, email, name }, err, env) {
     html,
     env,
   });
+}
+
+async function signDownloadToken(sessionId, expirySec, secret) {
+  const encoder = new TextEncoder();
+  const key = await crypto.subtle.importKey(
+    'raw',
+    encoder.encode(secret),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign']
+  );
+  const sig = await crypto.subtle.sign('HMAC', key, encoder.encode(`${sessionId}|${expirySec}`));
+  return Array.from(new Uint8Array(sig))
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('');
+}
+
+async function cleanupExpiredDeliveries(env) {
+  const cutoffMs = Date.now() - CLEANUP_AGE_DAYS * 86400000;
+  let cursor;
+  let deleted = 0;
+  let scanned = 0;
+  do {
+    const list = await env.BOOK_BUCKET.list({ prefix: 'delivered/', cursor });
+    scanned += list.objects.length;
+    for (const obj of list.objects) {
+      const uploadedMs = new Date(obj.uploaded).getTime();
+      if (uploadedMs < cutoffMs) {
+        await env.BOOK_BUCKET.delete(obj.key);
+        deleted++;
+      }
+    }
+    cursor = list.truncated ? list.cursor : undefined;
+  } while (cursor);
+  console.log(`Cleanup: scanned ${scanned}, deleted ${deleted} expired delivery PDFs`);
 }
