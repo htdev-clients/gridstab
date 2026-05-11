@@ -1,9 +1,13 @@
 /**
  * POST /api/webhook
  * Receives Stripe events. On successful payment, enqueues a watermark job.
- * Responds 200 immediately so Stripe doesn't retry.
+ *
+ * The queue send is awaited (not fire-and-forget) so that a failure returns
+ * a 5xx to Stripe, which then retries with backoff. Without this, a silent
+ * queue.send failure would drop the job and the buyer would never get their
+ * book — Stripe would have already received 200 OK and would not retry.
  */
-export async function onRequestPost({ request, env, waitUntil }) {
+export async function onRequestPost({ request, env }) {
   const payload = await request.text();
   const signature = request.headers.get('stripe-signature');
 
@@ -25,8 +29,14 @@ export async function onRequestPost({ request, env, waitUntil }) {
         name: session.customer_details?.name || '',
         purchaseDate: new Date().toISOString().split('T')[0],
       };
-      // Enqueue asynchronously — the response is already sent to Stripe
-      waitUntil(env.WATERMARK_QUEUE.send(job));
+
+      try {
+        await env.WATERMARK_QUEUE.send(job);
+      } catch (err) {
+        console.error(`Failed to enqueue watermark job for session ${session.id}:`, err);
+        // Surface the failure so Stripe retries the webhook
+        return new Response('Failed to enqueue delivery', { status: 500 });
+      }
     }
   }
 
