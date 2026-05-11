@@ -39,7 +39,7 @@ export async function onRequestGet({ request, env }) {
   return new Response(object.body, {
     headers: {
       'Content-Type': 'application/pdf',
-      'Content-Disposition': 'attachment; filename="Grid-Stability-Gilles-Chaspierre.pdf"',
+      'Content-Disposition': 'attachment; filename="Grid Stability in the Era of Inverter-Dominated Power Systems.pdf"',
       'Cache-Control': 'private, no-store',
     },
   });
