@@ -56,7 +56,7 @@ export default {
   },
 };
 
-async function processJob({ sessionId, email, name, purchaseDate, siteUrl }, env) {
+async function processJob({ sessionId, email, name, purchaseDate, siteUrl, overrideEmail, redeliver }, env) {
   // 1. Fetch Stripe session with expanded payment method (single API call).
   // The Worker is a single deployment that serves both live and test sessions
   // (test sessions originate from Pages preview builds), so it needs both keys.
@@ -87,11 +87,14 @@ async function processJob({ sessionId, email, name, purchaseDate, siteUrl }, env
   const sig = await signDownloadToken(sessionId, expirySec, env.DOWNLOAD_LINK_SECRET);
   const downloadUrl = `${siteUrl}/api/book/download?s=${encodeURIComponent(sessionId)}&exp=${expirySec}&sig=${sig}`;
 
-  // 6. Send the download link to the buyer
-  await sendBookEmail({ email, name, downloadUrl, expirySec, amountTotal, cardLast4, currency, purchaseTimestamp, env });
+  // 6. Send the download link to the buyer (use overrideEmail if this is a re-delivery)
+  const deliveryEmail = overrideEmail || email;
+  await sendBookEmail({ email: deliveryEmail, name, downloadUrl, expirySec, amountTotal, cardLast4, currency, purchaseTimestamp, env });
 
-  // 7. Notify Gilles of the sale
-  await notifySale({ sessionId, email, name, purchaseDate, env });
+  // 7. Notify Gilles of the sale (skip for re-deliveries to avoid duplicate alerts)
+  if (!redeliver) {
+    await notifySale({ sessionId, email, name, purchaseDate, env });
+  }
 }
 
 async function watermarkPDF(pdfBytes, email, name, purchaseDate) {

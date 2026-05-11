@@ -12,6 +12,8 @@
 #                             on the watermark Worker (used to sign/verify book
 #                             download URLs). Generate with:
 #                               openssl rand -hex 32
+#   ADMIN_PASSWORD          — password for the /admin/redeliver page (HTTP Basic Auth).
+#                             Generate with: openssl rand -hex 16
 #
 # Resend secrets belong on the watermark Worker, not Pages — see
 # workers/watermark/wrangler.toml.
@@ -29,3 +31,9 @@ binding = "WATERMARK_QUEUE"
 [[r2_buckets]]
 binding = "BOOK_BUCKET"
 bucket_name = "gridstab-books"
+
+# KV — same namespace as the watermark Worker; used by functions/admin/redeliver.js
+# to clear the idempotency key before re-queuing a delivery job.
+[[kv_namespaces]]
+binding = "PROCESSED_SESSIONS"
+id = "4508609629584632bbefce87814e525d"
