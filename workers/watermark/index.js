@@ -57,8 +57,13 @@ export default {
 };
 
 async function processJob({ sessionId, email, name, purchaseDate }, env) {
-  // 1. Fetch Stripe session with expanded payment method (single API call)
-  const sessionDetails = await fetchStripeSession(sessionId, env.STRIPE_SECRET_KEY);
+  // 1. Fetch Stripe session with expanded payment method (single API call).
+  // The Worker is a single deployment that serves both live and test sessions
+  // (test sessions originate from Pages preview builds), so it needs both keys.
+  const stripeKey = sessionId.startsWith('cs_test_')
+    ? env.STRIPE_SECRET_KEY_TEST
+    : env.STRIPE_SECRET_KEY;
+  const sessionDetails = await fetchStripeSession(sessionId, stripeKey);
   const amountTotal = sessionDetails.amount_total; // in cents
   const currency = sessionDetails.currency;
   const cardLast4 = sessionDetails.payment_intent?.payment_method?.card?.last4 || '';

@@ -4,11 +4,14 @@
 #
 # SECRET KEYS must be set with: npx wrangler secret put <NAME>
 # Required secrets:
-#   RESEND_API_KEY        — from Resend dashboard
-#   STRIPE_SECRET_KEY     — sk_live_... (used to fetch session details for the receipt)
-#   DOWNLOAD_LINK_SECRET  — random 32+ byte hex string; MUST match the value set
-#                           on Cloudflare Pages (used to sign book download URLs).
-#                           Generate with: openssl rand -hex 32
+#   RESEND_API_KEY          — from Resend dashboard
+#   STRIPE_SECRET_KEY       — sk_live_... (used to fetch details for live sessions)
+#   STRIPE_SECRET_KEY_TEST  — sk_test_... (used when sessionId starts with cs_test_;
+#                             test sessions originate from Pages preview deployments
+#                             and the single Worker deployment serves both envs)
+#   DOWNLOAD_LINK_SECRET    — random 32+ byte hex string; MUST match the value set
+#                             on Cloudflare Pages (used to sign book download URLs).
+#                             Generate with: openssl rand -hex 32
 #
 # ─────────────────────────────────────────────────────────────────────────────
 # MANUAL RE-DELIVERY
