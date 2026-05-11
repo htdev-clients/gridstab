@@ -28,6 +28,10 @@ export async function onRequestPost({ request, env }) {
         email: session.customer_details?.email,
         name: session.customer_details?.name || '',
         purchaseDate: new Date().toISOString().split('T')[0],
+        // Origin the buyer used (production vs preview). The worker bakes this
+        // into the download link so a preview-mode test purchase generates a
+        // preview-URL link rather than pointing at gridstab.com.
+        siteUrl: new URL(request.url).origin,
       };
 
       try {

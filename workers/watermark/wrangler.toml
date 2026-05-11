@@ -72,7 +72,6 @@ enabled = true
 # Queue consumer — receives jobs enqueued by the Pages webhook function
 [vars]
 RESEND_FROM_EMAIL = "books@gridstab.com"
-SITE_URL = "https://gridstab.com"
 
 [[queues.consumers]]
 queue = "book-watermark-queue"

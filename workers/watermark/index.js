@@ -56,7 +56,7 @@ export default {
   },
 };
 
-async function processJob({ sessionId, email, name, purchaseDate }, env) {
+async function processJob({ sessionId, email, name, purchaseDate, siteUrl }, env) {
   // 1. Fetch Stripe session with expanded payment method (single API call).
   // The Worker is a single deployment that serves both live and test sessions
   // (test sessions originate from Pages preview builds), so it needs both keys.
@@ -85,7 +85,7 @@ async function processJob({ sessionId, email, name, purchaseDate }, env) {
   // 5. Build a signed, time-limited download URL (30 days)
   const expirySec = Math.floor(Date.now() / 1000) + LINK_VALIDITY_DAYS * 86400;
   const sig = await signDownloadToken(sessionId, expirySec, env.DOWNLOAD_LINK_SECRET);
-  const downloadUrl = `${env.SITE_URL}/api/book/download?s=${encodeURIComponent(sessionId)}&exp=${expirySec}&sig=${sig}`;
+  const downloadUrl = `${siteUrl}/api/book/download?s=${encodeURIComponent(sessionId)}&exp=${expirySec}&sig=${sig}`;
 
   // 6. Send the download link to the buyer
   await sendBookEmail({ email, name, downloadUrl, expirySec, amountTotal, cardLast4, currency, purchaseTimestamp, env });
