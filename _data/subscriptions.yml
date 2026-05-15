@@ -1,5 +1,5 @@
 - name: Monthly Access
-  price: 10€
+  price: 12€
   period: /month
   features:
     - Web version access to GridStab News
@@ -10,7 +10,7 @@
   cta_url: https://gilleschaspiere.substack.com/subscribe
 
 - name: Annual Basic
-  price: 110€
+  price: 120€
   period: /year
   features:
     - All Monthly benefits
